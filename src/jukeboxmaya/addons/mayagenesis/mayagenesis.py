@@ -2,13 +2,13 @@ import os
 
 import maya.cmds as cmds
 
-from jukebox.core.log import get_logger
+from jukeboxcore.log import get_logger
 log = get_logger(__name__)
 
-from jukebox.core import djadapter
-from jukebox.core.plugins import JB_MayaPlugin, MayaPluginManager
-from jukebox.maya3d.menu import MenuManager
-from jukebox.maya3d.plugins import jbscene
+from jukeboxcore import djadapter
+from jukeboxmaya.menu import MenuManager
+from jukeboxmaya.mayaplugins import jbscene
+from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
 
 
 class MayaGenesis(JB_MayaPlugin):

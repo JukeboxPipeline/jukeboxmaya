@@ -1,5 +1,5 @@
-from jukebox.core.plugins import JB_MayaPlugin, MayaPluginManager
-from jukebox.maya3d.menu import MenuManager
+from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
+from jukeboxmaya.menu import MenuManager
 
 
 class MayaConfiger(JB_MayaPlugin):

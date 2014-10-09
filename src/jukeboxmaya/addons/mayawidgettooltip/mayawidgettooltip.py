@@ -1,8 +1,8 @@
 from PySide import QtGui
 
-from jukebox.core.plugins import JB_MayaPlugin
-from jukebox.core.gui import main
-from jukebox.core.gui.widgets.tooltip import JB_WindowToolTip
+from jukeboxcore.gui import main
+from jukeboxcore.gui.widgets.tooltip import JB_WindowToolTip
+from jukeboxmaya.plugins import JB_MayaPlugin
 
 
 class MayaWidgetToolTip(JB_MayaPlugin):

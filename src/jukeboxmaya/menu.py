@@ -4,7 +4,7 @@ from weakref import WeakValueDictionary
 
 import maya.cmds as cmds
 
-from jukebox.core import errors
+from jukeboxcore import errors
 
 
 class Menu(WeakValueDictionary):

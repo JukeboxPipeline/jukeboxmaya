@@ -2,7 +2,7 @@ import maya.cmds as cmds
 import maya.OpenMayaMPx as OpenMayaMPx
 import maya.OpenMaya as OpenMaya
 
-from jukebox.core.errors import PluginInitError, PluginUninitError
+from jukeboxcore.errors import PluginInitError, PluginUninitError
 
 
 class JB_SceneNode(OpenMayaMPx.MPxNode):

@@ -6,9 +6,10 @@ import os
 
 import maya.cmds as cmds
 
-from jukebox.core.constants import MAYA_PLUGIN_PATH
-from jukebox.core.plugins import MayaPluginManager
-from jukebox.maya3d.menu import MenuManager
+from jukeboxcore import main
+from jukeboxmaya.constants import MAYA_PLUGIN_PATH
+from jukeboxmaya.plugins import MayaPluginManager
+from jukeboxmaya.menu import MenuManager
 
 
 def load_mayaplugins():
@@ -32,15 +33,17 @@ def load_mayaplugins():
     os.environ['MAYA_PLUG_IN_PATH'] = mpp
 
 
-def mayainit():
+def init():
     """Initialize the pipeline in maya so everything works
 
-    Include third party libs and load plugins.
+    Init environment and load plugins.
+    This also creates the initial Jukebox Menu entry.
 
     :returns: None
     :rtype: None
     :raises: None
     """
+    main.init_environment()
     mm = MenuManager.get()
     mm.create_menu("Jukebox", tearOff=True)
     # load plugins
