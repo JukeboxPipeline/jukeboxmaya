@@ -3,7 +3,7 @@
 import os
 
 from jukeboxcore import constants
- 
+
 _norm = os.path.normpath  # make it shorter
 
 here = os.path.abspath(os.path.dirname(__file__))
