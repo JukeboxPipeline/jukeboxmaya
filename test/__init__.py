@@ -25,9 +25,12 @@ def start_maya_standalone(name='python'):
     osinter = ostool.get_interface()
     mayaloc = osinter.get_maya_location()
     mayasite = osinter.get_maya_sitepackage_dir()
+    mayabin = osinter.get_maya_bin()
     sys.path.append(mayasite)
-    os.environ['MAYA_LOCATION'] = mayaloc
 
+    os.environ['MAYA_LOCATION'] = mayaloc
+    #This is not documented but necessary. At least on windows.
+    os.environ["PATH"] = os.pathsep.join((os.environ.get("PATH", ""), mayabin))
     # run maya standalone
     import maya.standalone
     maya.standalone.initialize(name=name)
