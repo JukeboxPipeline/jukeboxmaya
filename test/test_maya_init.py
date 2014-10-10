@@ -1,6 +1,6 @@
 import os
 
-import jukebox.maya3d.main
+import jukeboxmaya.main
 
 
 def test_mayainit():
@@ -12,4 +12,4 @@ def test_mayainit():
     """
     jpp = os.environ.get('JUKEBOX_PLUGIN_PATH', '')
     os.environ['JUKEBOX_PLUGIN_PATH'] = ';'.join((jpp, os.path.abspath("jukebox/tests/testplugins")))
-    jukebox.maya3d.main.mayainit()
+    jukeboxmaya.main.init()
