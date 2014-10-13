@@ -40,7 +40,7 @@ with open(initfile) as fp:
 
 long_description = read('README.rst', 'HISTORY.rst')
 install_requires = []
-tests_require = ['pytest']
+tests_require = ['pytest', 'mock']
 
 
 setup(

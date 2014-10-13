@@ -67,15 +67,13 @@ class Menu(WeakValueDictionary):
         if parent is not None:
             if name in parent:
                 raise errors.MenuExistsError("A menu with this name: %s and parent: %s exists already!" % (name, parent))
-            if not os.environ.get('TESTING', False):
-                cmds.setParent(parent.menustring(), menu=1)
-                self.__kwargs['parent'] = parent.menustring()
-                self.__menustring = cmds.menuItem(**self.__kwargs)
+            cmds.setParent(parent.menustring(), menu=1)
+            self.__kwargs['parent'] = parent.menustring()
+            self.__menustring = cmds.menuItem(**self.__kwargs)
             parent[name] = self
         else:
-            if not os.environ.get('TESTING', False):
-                cmds.setParent('MayaWindow')
-                self.__menustring = cmds.menu(**self.__kwargs)
+            cmds.setParent('MayaWindow')
+            self.__menustring = cmds.menu(**self.__kwargs)
 
     def __str__(self, ):
         """ Return a nice readable description of menu
@@ -109,8 +107,7 @@ class Menu(WeakValueDictionary):
         if self.__parent is not None:
             del self.__parent[self.__name]
             self.__parent = None
-        if not os.environ.get('TESTING', False):
-            cmds.deleteUI(self.__menustring)
+        cmds.deleteUI(self.__menustring)
 
     def menustring(self, ):
         """ Return the string that is used by maya to identify the ui
