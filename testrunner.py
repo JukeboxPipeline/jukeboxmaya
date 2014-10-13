@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """This script runs all tests for jukebox-maya with the maya python interpreter
 
 Because using an external interpreter causes all kind of problems, this script
@@ -21,8 +22,6 @@ def setup_argparse():
     parser = argparse.ArgumentParser(
         description="Run tests with the maya python intepreter.\
         py.test is used for running the tests.")
-    parser.add_argument('options', nargs=argparse.REMAINDER,
-                        help="options for py.test")
     return parser
 
 
@@ -71,7 +70,7 @@ def main(argv=sys.argv[1:]):
     """
     parser = setup_argparse()
     args = ["-m", "pytest"]
-    options = parser.parse_args(argv).options
+    options = parser.parse_known_args(argv)[1]
     args.extend(options)
     setup_environment()
     rc, output = execute_mayapy(args)
