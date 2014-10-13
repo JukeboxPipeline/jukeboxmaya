@@ -1,5 +1,4 @@
 """ Here are functions and classes for tasks related to menu creation in maya """
-import os
 from weakref import WeakValueDictionary
 
 import maya.cmds as cmds
