@@ -1,5 +1,5 @@
-from jukebox.core import errors
-from jukebox.maya3d.menu import MenuManager
+from jukeboxcore import errors
+from jukeboxmaya.menu import MenuManager
 
 
 def test_menu_manager():
