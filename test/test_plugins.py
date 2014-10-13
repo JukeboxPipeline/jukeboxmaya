@@ -7,6 +7,7 @@ from jukeboxmaya.mayaplugins import jbscene
 
 
 def test_jbsceneplugin():
+    load_mayaplugins()
     node = cmds.createNode('jb_sceneNode')
     cmds.setAttr("%s.taskfile_id" % node, 85)
 

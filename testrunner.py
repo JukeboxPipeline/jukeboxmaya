@@ -32,8 +32,8 @@ def setup_environment():
     :rtype: None
     :raises: None
     """
-    print os.environ['PATH']
-    pypath = ''
+    osinter = ostool.get_interface()
+    pypath = osinter.get_maya_envpath()
     for p in sys.path:
         pypath = os.pathsep.join((pypath, p))
     os.environ['PYTHONPATH'] = pypath
@@ -74,7 +74,8 @@ def main(argv=sys.argv[1:]):
     args.extend(options)
     setup_environment()
     rc, output = execute_mayapy(args)
-    print output
+    for l in output.split("\n"):
+        print l
     sys.exit(rc)
 
 
