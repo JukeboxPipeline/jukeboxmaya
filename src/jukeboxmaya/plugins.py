@@ -1,4 +1,4 @@
-from jukeboxcore.plugins import JB_Plugin, PluginManager, JB_CorePlugin
+from jukeboxcore.plugins import JB_Plugin, PluginManager
 from jukeboxmaya.constants import BUILTIN_PLUGIN_PATH
 
 
@@ -17,6 +17,7 @@ class JB_MayaPlugin(JB_Plugin):
 class MayaPluginManager(PluginManager):
     """ A plugin manager that supports JB_CorePlugins and JB_MayaPlugins """
 
-    supportedTypes = (JB_CorePlugin, JB_MayaPlugin)
+    supportedTypes = PluginManager.supportedTypes
+    supportedTypes.append(JB_MayaPlugin)
 
     builtinpluginpath = BUILTIN_PLUGIN_PATH
