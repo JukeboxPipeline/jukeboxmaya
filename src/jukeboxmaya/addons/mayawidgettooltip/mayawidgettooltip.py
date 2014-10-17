@@ -1,6 +1,6 @@
 from PySide import QtGui
 
-from jukeboxcore.gui import main
+from jukeboxmaya.gui import main
 from jukeboxcore.gui.widgets.tooltip import JB_WindowToolTip
 from jukeboxmaya.plugins import JB_MayaPlugin
 

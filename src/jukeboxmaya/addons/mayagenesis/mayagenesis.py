@@ -1,6 +1,10 @@
 import os
 
 import maya.cmds as cmds
+try:
+    import shiboken
+except ImportError:
+    from PySide import shiboken
 
 from jukeboxcore.log import get_logger
 log = get_logger(__name__)
@@ -57,7 +61,7 @@ class MayaGenesis(JB_MayaPlugin):
         :rtype: None
         :raises: None
         """
-        if self.gw:
+        if self.gw and shiboken.isValid(self.gw):
             self.gw.deleteLater()
         self.gw = self.GenesisWin()
         self.gw.show()
