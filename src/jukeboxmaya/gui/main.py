@@ -2,6 +2,7 @@ import maya.OpenMayaUI as apiUI
 
 from jukeboxcore.gui.main import wrap
 
+
 def wrap_maya_ui(mayaname):
     """    Given the name of a Maya UI element of any type,
     return the corresponding QWidget or QAction.
