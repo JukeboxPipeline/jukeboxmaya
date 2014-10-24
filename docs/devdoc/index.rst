@@ -9,3 +9,4 @@ There are a lot of guides for the general workflow in the jukebox-core project: 
    :maxdepth: 2
 
    getstarted
+   unittests
