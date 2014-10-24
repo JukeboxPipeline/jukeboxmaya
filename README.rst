@@ -8,27 +8,17 @@ Jukebox Maya
 .. image:: http://img.shields.io/pypi/dm/jukeboxmaya.png
     :target: https://pypi.python.org/pypi/jukeboxmaya
 
-.. image:: http://img.shields.io/pypi/l/jukeboxmaya.svg
+.. image:: http://img.shields.io/pypi/l/jukeboxmaya.png
     :target: https://pypi.python.org/pypi/jukeboxmaya
 
 
 
 
-Jukebox Pipeline for Maya
+Jukebox Pipeline for Maya. Jukebox Pipeline is a framework for developing pipeline tools for different softwares in python.
+It is centered around the `Jukebox Core Package <https://pypi.python.org/pypi/jukebox-core>`_.
 
 
 Documentation
 -------------
 
-There is currently no documentation available on the internet.
-
-  1. Clone the repository.
-  2. Check docs/requirements.txt and install missing dependencies
-  3. For a correct reference documentation of the code either install all dependencies of jukeboxmaya
-     or simply install jukeboxmaya in development mode.
-  4. Install this project in edit mode via::
-
-       pip install -e path/to/repo
-
-  5. Execute docs/make or docs/make.bat
-  6. The documentation will be under docs/_build
+The documentation can be found here: http://pythonhosted.org/jukeboxmaya
