@@ -30,7 +30,7 @@ slightly:
 
        $ scripts/activate
 
-  5. Install the psycopg2 dependency. See the jukebox-core documentation in the user manual section under **Installation** on how to do that.
+  5. Install the psycopg2 dependency. See :ref:`jukeboxcore:installation` on how to do that.
   6. Install jukebox-maya::
 
        $ pip install jukebox-maya

@@ -2,7 +2,7 @@
 Unittests
 =========
 
-For a general introduction on unittesting please read the jukeboxcore documentation.
+For a general introduction on unittesting please read the :ref:`jukeboxcore:unittest` documentation of jukeboxcore.
 This chapter will explain the special test setup that is used, so maya can be integrated into the test environment.
 
 ---------------
