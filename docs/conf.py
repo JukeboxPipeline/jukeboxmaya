@@ -271,8 +271,9 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 
 
 # -- Intersphinx Config ---------------------------------------------------
-intersphinx_mapping = {'python': ('http://docs.python.org/2.7', None),
-                       'pyside': ('https://deptinfo-ensip.univ-poitiers.fr/ENS/pyside-docs/', None)}
+intersphinx_mapping = {'python': ('https://docs.python.org/2.7', None),
+                       'pyside': ('https://deptinfo-ensip.univ-poitiers.fr/ENS/pyside-docs/', None),
+                       'jukeboxcore': ('http://pythonhosted.org/jukebox-core/', None)}
 
 
 # if sphinx-build is running, do updatedoc to have a fresh apidoc
@@ -280,3 +281,19 @@ if 'sphinx-build' in sys.argv[0].lower():
     sys.path.append(os.path.dirname(__file__))
     import updatedoc
     updatedoc.main([])
+
+# mock the maya dependencie
+import sys
+try:
+    from unittest.mock import MagicMock
+except ImportError:
+    from mock import Mock as MagicMock
+
+
+class Mock(MagicMock):
+    @classmethod
+    def __getattr__(cls, name):
+            return Mock()
+
+MOCK_MODULES = ['maya.cmds', 'maya.OpenMayaMPx', 'maya.OpenMaya', 'maya.OpenMayaUI', 'maya']
+sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
