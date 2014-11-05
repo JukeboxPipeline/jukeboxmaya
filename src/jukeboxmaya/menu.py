@@ -3,7 +3,10 @@ from weakref import WeakValueDictionary
 
 import maya.cmds as cmds
 
+from jukeboxcore.log import get_logger
+log = get_logger(__name__)
 from jukeboxcore import errors
+
 
 
 class Menu(WeakValueDictionary):
@@ -198,7 +201,13 @@ class MenuManager(object):
         :rtype: None
         :raises: errors.MenuExistsError
         """
-        m = Menu(name, parent, **kwargs)
+        try:
+            m = Menu(name, parent, **kwargs)
+        except RuntimeError as e:
+            if e.message == "UI commands can't be run in batch mode.":
+                log.info("Menu not created. You are running batch mode.")
+                return
+            raise
         if parent is None:
             self.menus[name] = m
         return m
