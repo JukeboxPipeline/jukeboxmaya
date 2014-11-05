@@ -45,13 +45,16 @@ def setup_environment():
     os.environ['PYTHONPATH'] = pypath
 
 
-def execute_mayapy(args):
+def execute_mayapy(args, wait=True):
     """Execute mayapython with the given arguments, capture and return the output
 
     :param args: arguments for the maya python intepreter
     :type args: list
-    :returns: the returncode
-    :rtype: int
+    :param wait: If True, waits for the process to finish and returns the returncode.
+                 If False, just returns the process
+    :type wait: bool
+    :returns: if wait is True, the returncode, else the process
+    :rtype: int|:class:`subprocess.Popen`
     :raises: None
     """
     osinter = ostool.get_interface()
@@ -60,25 +63,32 @@ def execute_mayapy(args):
     allargs.extend(args)
     print "Executing mayapy with: %s" % allargs
     mayapyprocess = subprocess.Popen(allargs)
-    rc = mayapyprocess.wait()
-    print "Process mayapy finished!"
-    return rc
+    if wait:
+        rc = mayapyprocess.wait()
+        print "Process mayapy finished!"
+        return rc
+    else:
+        return mayapyprocess
 
 
-def mayapy_launcher(args=None):
+def mayapy_launcher(args=None, wait=True):
     """Start a new subprocess with mayapy and call the :func:`jukeboxmaya.launcher.main_func`.
 
     So this can be used when launching jukeboxmaya from an external intepreter but
     you want to actually use the mayapy intepreter instead (because it\'s less buggy).
 
-    :raises: :class:`SystemExit`
+    :param wait: If True, waits for the process to finish and returns the returncode.
+                 If False, just returns the process
+    :type wait: bool
+    :returns: if wait is True, the returncode, else the process
+    :rtype: int|:class:`subprocess.Popen`
     """
     arguments = ["-m",  "jukeboxmaya.launcher"]
     arguments.extend(args)
     setup_environment()
-    rc = execute_mayapy(arguments)
-    sys.exit(rc)
+    return execute_mayapy(arguments, wait)
 
 
 if __name__ == '__main__':
-    mayapy_launcher()
+    rc = mayapy_launcher()
+    sys.exit(rc)

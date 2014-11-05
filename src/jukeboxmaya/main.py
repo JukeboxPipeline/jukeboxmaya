@@ -46,11 +46,10 @@ def init():
     """
     main.init_environment()
     try:
-        maya.standalone.initialize
+        maya.standalone.initialize()
     except RuntimeError:
-        pass
-    mm = MenuManager.get()
-    mm.create_menu("Jukebox", tearOff=True)
+        mm = MenuManager.get()
+        mm.create_menu("Jukebox", tearOff=True)
     # load plugins
     pmanager = MayaPluginManager.get()
     pmanager.load_plugins()

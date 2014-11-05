@@ -43,7 +43,7 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         :rtype: None
         :raises: None
         """
-        mayapy_launcher(["launch", "MayaSceneRelease"])
+        mayapy_launcher(["launch", "MayaSceneRelease"], wait=False)
 
     def run(self, ):
         """Start the configeditor

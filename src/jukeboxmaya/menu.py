@@ -200,13 +200,7 @@ class MenuManager(object):
         :rtype: None
         :raises: errors.MenuExistsError
         """
-        try:
-            m = Menu(name, parent, **kwargs)
-        except RuntimeError as e:
-            if e.message == "UI commands can't be run in batch mode.\n":
-                log.info("Menu not created. You are running batch mode.")
-                return
-            raise
+        m = Menu(name, parent, **kwargs)
         if parent is None:
             self.menus[name] = m
         return m
