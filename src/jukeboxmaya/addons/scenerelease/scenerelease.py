@@ -1,6 +1,8 @@
+from jukeboxmaya.menu import MenuManager
 from jukeboxcore.djadapter import FILETYPES
-from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
 from jukeboxcore.gui.widgets.releasewin import ReleaseWin
+from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
+from jukeboxmaya.mayapylauncher import mayapy_launcher
 
 
 class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
@@ -21,7 +23,9 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         :rtype: None
         :raises: None
         """
-        pass
+        self.mm = MenuManager.get()
+        p = self.mm.menus['Jukebox']
+        self.menu = self.mm.create_menu("Release", p, command=self.run_external)
 
     def uninit(self, ):
         """Do nothing on uninit!
@@ -30,7 +34,16 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         :rtype: None
         :raises: None
         """
-        pass
+        self.mm.delete_menu(self.menu)
+
+    def run_external(self, *args, **kwargs):
+        """Run the Releasewin in another process
+
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        mayapy_launcher(["launch", "MayaSceneRelease"])
 
     def run(self, ):
         """Start the configeditor

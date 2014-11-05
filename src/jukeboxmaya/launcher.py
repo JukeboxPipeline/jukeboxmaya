@@ -6,14 +6,7 @@ It can also run the core standalone plugins but it is recommended to use the reg
 import argparse
 import sys
 
-# initialize maya standalone so cmds commands work properly
-import maya.standalone
-try:
-    maya.standalone.initialize()
-except RuntimeError:
-    pass
-
-from jukeboxcore import gui
+import jukeboxcore.gui.main as guimain
 from jukeboxcore import plugins as coreplugins
 from jukeboxmaya import plugins as mayaplugins
 from jukeboxmaya import main
@@ -87,12 +80,10 @@ class Launcher(object):
         pm = mayaplugins.MayaPluginManager.get()
         addon = pm.get_plugin(args.addon)
         isgui = isinstance(addon, coreplugins.JB_StandaloneGuiPlugin)
-        if isgui:
-            gui.main.init_gui()
         print "Launching %s..." % args.addon
         addon.run()
         if isgui:
-            app = gui.main.get_qapp()
+            app = guimain.get_qapp()
             sys.exit(app.exec_())
 
     def setup_list_parser(self, parser):
@@ -157,6 +148,14 @@ def main_func(args=None):
     :rtype: None
     :raises: None
     """
+    # initialize maya standalone so cmds commands work properly
+    import maya.standalone
+    try:
+        guimain.init_gui()
+        maya.standalone.initialize()
+    except RuntimeError:
+        pass
+
     main.init()
     launcher = Launcher()
     parsed, unknown = launcher.parse_args(args)

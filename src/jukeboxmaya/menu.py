@@ -8,7 +8,6 @@ log = get_logger(__name__)
 from jukeboxcore import errors
 
 
-
 class Menu(WeakValueDictionary):
     """ This represents a maya menu or menuitem that was created with cmds.menu/cmds.menuitem
 
@@ -204,7 +203,7 @@ class MenuManager(object):
         try:
             m = Menu(name, parent, **kwargs)
         except RuntimeError as e:
-            if e.message == "UI commands can't be run in batch mode.":
+            if e.message == "UI commands can't be run in batch mode.\n":
                 log.info("Menu not created. You are running batch mode.")
                 return
             raise

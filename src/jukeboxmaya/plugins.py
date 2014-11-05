@@ -1,6 +1,6 @@
 import abc
 
-from jukeboxcore.plugins import JB_Plugin, PluginManager
+from jukeboxcore.plugins import JB_Plugin, JB_StandalonePlugin, JB_StandaloneGuiPlugin, PluginManager
 from jukeboxmaya.constants import BUILTIN_PLUGIN_PATH
 
 
@@ -16,7 +16,7 @@ class JB_MayaPlugin(JB_Plugin):
     pass
 
 
-class JB_MayaStandalonePlugin(JB_MayaPlugin):
+class JB_MayaStandalonePlugin(JB_StandalonePlugin):
     """Maya plugin for standalone addons.
 
     Standalone addons feature a special run method an
@@ -39,7 +39,7 @@ class JB_MayaStandalonePlugin(JB_MayaPlugin):
         pass
 
 
-class JB_MayaStandaloneGuiPlugin(JB_MayaStandalonePlugin):
+class JB_MayaStandaloneGuiPlugin(JB_StandaloneGuiPlugin):
     """Maya plugin for standalone addons that also need a gui.
 
     Standalone addons feature a special run method an
