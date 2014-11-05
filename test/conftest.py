@@ -28,7 +28,7 @@ def mock_maya_ui_cmds():
 
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_mayastandalone():
+def setup_maya():
     import maya.standalone
     maya.standalone.initialize()
     mock_maya_ui_cmds()

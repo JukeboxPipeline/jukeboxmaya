@@ -60,6 +60,14 @@ setup(
     license='BSD',
     zip_safe=False,
     keywords='jukeboxmaya',
+    entry_points={
+        'console_scripts': [
+            'jukeboxmayapy = jukeboxmaya.mayapylauncher:mayapy_launcher',
+        ],
+        'gui_scripts': [
+            'jukeboxmayapyw = jukeboxmaya.mayapylauncher:mayapy_launcher',
+        ]
+    },
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',

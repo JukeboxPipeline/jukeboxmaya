@@ -4,6 +4,7 @@ Befor you use maya with our pipeline, call mayainit at least once. Usually the l
 """
 import os
 
+import maya.standalone
 import maya.cmds as cmds
 
 from jukeboxcore import main
@@ -44,6 +45,10 @@ def init():
     :raises: None
     """
     main.init_environment()
+    try:
+        maya.standalone.initialize
+    except RuntimeError:
+        pass
     mm = MenuManager.get()
     mm.create_menu("Jukebox", tearOff=True)
     # load plugins
