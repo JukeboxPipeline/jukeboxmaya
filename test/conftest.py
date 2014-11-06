@@ -9,6 +9,7 @@ import pytest
 @pytest.fixture(scope="session", autouse=True)
 def setup_test():
     os.environ['JUKEBOX_TESTING'] = 'True'
+    jukeboxmaya.main.init()
 
 
 def mock_maya_ui_cmds():
@@ -29,6 +30,6 @@ def mock_maya_ui_cmds():
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_maya():
-    import maya.standalone
-    maya.standalone.initialize()
+    #import maya.standalone
+    #maya.standalone.initialize()
     mock_maya_ui_cmds()
