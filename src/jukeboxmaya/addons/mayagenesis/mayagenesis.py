@@ -30,22 +30,42 @@ class MayaGenesis(JB_MayaPlugin):
     description = "A tool for saving and opening shots and assets."
 
     def init(self, ):
-        """Create the menu \"Genesis\" under \"Jukebox\" to start the plugin and setup the GenesisWin
+        """Initialize the plugin. Do nothing.
 
-        :returns: None
-        :rtype: None
-        :raises: None
+        This function gets called when the plugin is loaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
         """
         self.gw = None
         pm = MayaPluginManager.get()
         genesis =  pm.get_plugin("Genesis")
         self.GenesisWin = self.subclass_genesis(genesis.GenesisWin)
 
+    def uninit(self, ):
+        """Uninitialize the plugin. Do nothing
+
+        This function gets called when the plugin is unloaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def init_ui(self, ):
+        """Create the menu \"Genesis\" under \"Jukebox\" to start the plugin and setup the GenesisWin
+
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
         self.mm = MenuManager.get()
         p = self.mm.menus['Jukebox']
         self.menu = self.mm.create_menu("Genesis", p, command=self.run)
 
-    def uninit(self):
+    def uninit_ui(self):
         """Delete the \"Genesis\" menu
 
         :returns: None

@@ -17,7 +17,29 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
     description = "Release Maya scenes"
 
     def init(self, ):
-        """Do nothing on init! Call run() if you want to start the configeditor
+        """Initialize the plugin. Do nothing.
+
+        This function gets called when the plugin is loaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def uninit(self, ):
+        """Uninitialize the plugin. Do nothing
+
+        This function gets called when the plugin is unloaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def init_ui(self, ):
+        """Create the menu Release under Jukebox menu.
 
         :returns: None
         :rtype: None
@@ -27,8 +49,8 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         p = self.mm.menus['Jukebox']
         self.menu = self.mm.create_menu("Release", p, command=self.run_external)
 
-    def uninit(self, ):
-        """Do nothing on uninit!
+    def uninit_ui(self, ):
+        """Delete the Release menu
 
         :returns: None
         :rtype: None

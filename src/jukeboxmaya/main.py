@@ -13,6 +13,14 @@ from jukeboxmaya.plugins import MayaPluginManager
 from jukeboxmaya.menu import MenuManager
 
 
+STANDALONE_INITIALIZED = None
+"""After calling :func:`init` this is True, if maya standalone
+has been initialized or False, if you are running
+from within maya.
+It is None, if initialized has not been called yet.
+"""
+
+
 def load_mayaplugins():
     """Loads the maya plugins (not jukebox plugins) of the pipeline
 
@@ -44,12 +52,16 @@ def init():
     :rtype: None
     :raises: None
     """
+    global STANDALONE_INITIALIZED
     main.init_environment()
     try:
         maya.standalone.initialize()
-    except RuntimeError:
-        mm = MenuManager.get()
-        mm.create_menu("Jukebox", tearOff=True)
+        STANDALONE_INITIALIZED = True
+    except RuntimeError as e:
+        STANDALONE_INITIALIZED = False
+        if str(e) == "maya.standalone may only be used from an external Python interpreter":
+            mm = MenuManager.get()
+            mm.create_menu("Jukebox", tearOff=True)
     # load plugins
     pmanager = MayaPluginManager.get()
     pmanager.load_plugins()

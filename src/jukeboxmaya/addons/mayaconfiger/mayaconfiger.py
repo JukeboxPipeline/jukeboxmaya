@@ -17,6 +17,28 @@ class MayaConfiger(JB_MayaPlugin):
     description = "A tool for editing config files"
 
     def init(self, ):
+        """Initialize the plugin. Do nothing.
+
+        This function gets called when the plugin is loaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def uninit(self, ):
+        """Uninitialize the plugin. Do nothing
+
+        This function gets called when the plugin is unloaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def init_ui(self, ):
         """Create the menu \"Preferences\" under \"Jukebox\" to start the plugin
 
         :returns: None
@@ -27,7 +49,7 @@ class MayaConfiger(JB_MayaPlugin):
         p = self.mm.menus['Jukebox']
         self.menu = self.mm.create_menu("Preferences", p, command=self.run)
 
-    def uninit(self, ):
+    def uninit_ui(self, ):
         """Delete the \"Prefereneces\" menu
 
         :returns: None
