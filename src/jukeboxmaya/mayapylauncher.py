@@ -77,12 +77,16 @@ def mayapy_launcher(args=None, wait=True):
     So this can be used when launching jukeboxmaya from an external intepreter but
     you want to actually use the mayapy intepreter instead (because it\'s less buggy).
 
+    :param args: arguments for the launcher. If None, sys.argv[1:] is used
+    :type args: list
     :param wait: If True, waits for the process to finish and returns the returncode.
                  If False, just returns the process
     :type wait: bool
     :returns: if wait is True, the returncode, else the process
     :rtype: int|:class:`subprocess.Popen`
     """
+    if args is None:
+        args = sys.argv[1:]
     arguments = ["-m",  "jukeboxmaya.launcher"]
     arguments.extend(args)
     setup_environment()
