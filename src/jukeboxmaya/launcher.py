@@ -5,6 +5,7 @@ It can also run the core standalone plugins but it is recommended to use the reg
 """
 import argparse
 import sys
+import traceback
 
 import jukeboxcore.gui.main as guimain
 from jukeboxcore import plugins as coreplugins
@@ -161,4 +162,8 @@ def main_func(args=None):
 
 
 if __name__ == '__main__':
-    main_func()
+    try:
+        main_func()
+    except Exception:
+        print traceback.format_exc()
+        raw_input("Unexpected Exception. Press enter to exit...")
