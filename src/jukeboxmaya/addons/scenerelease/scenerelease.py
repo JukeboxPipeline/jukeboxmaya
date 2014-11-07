@@ -1,20 +1,20 @@
-from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
 from jukeboxmaya.menu import MenuManager
+from jukeboxcore.djadapter import FILETYPES
+from jukeboxcore.gui.widgets.releasewin import ReleaseWin
+from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
+from jukeboxmaya.mayapylauncher import mayapy_launcher
 
 
-class MayaConfiger(JB_MayaPlugin):
-    """A maya plugin for the configeditor.
+class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
+    """A plugin that can release a maya scene
 
-    This will create a menu entry \"Preferences\" under \"Jukebox\"!
-    With this menu entry you can start the Plugin.
+    This can be used as a standalone plugin.
     """
-
-    required = ('Configer',)
 
     author = "David Zuber"
     copyright = "2014"
     version = "0.1"
-    description = "A tool for editing config files"
+    description = "Release Maya scenes"
 
     def init(self, ):
         """Initialize the plugin. Do nothing.
@@ -39,7 +39,7 @@ class MayaConfiger(JB_MayaPlugin):
         pass
 
     def init_ui(self, ):
-        """Create the menu \"Preferences\" under \"Jukebox\" to start the plugin
+        """Create the menu Release under Jukebox menu.
 
         :returns: None
         :rtype: None
@@ -47,10 +47,10 @@ class MayaConfiger(JB_MayaPlugin):
         """
         self.mm = MenuManager.get()
         p = self.mm.menus['Jukebox']
-        self.menu = self.mm.create_menu("Preferences", p, command=self.run)
+        self.menu = self.mm.create_menu("Release", p, command=self.run_external)
 
     def uninit_ui(self, ):
-        """Delete the \"Prefereneces\" menu
+        """Delete the Release menu
 
         :returns: None
         :rtype: None
@@ -58,13 +58,21 @@ class MayaConfiger(JB_MayaPlugin):
         """
         self.mm.delete_menu(self.menu)
 
-    def run(self, *args, **kwargs):
-        """Start the tool
+    def run_external(self, *args, **kwargs):
+        """Run the Releasewin in another process
 
         :returns: None
         :rtype: None
         :raises: None
         """
-        pm = MayaPluginManager.get()
-        configer =  pm.get_plugin("Configer")
-        configer.run()
+        mayapy_launcher(["launch", "MayaSceneRelease"], wait=False)
+
+    def run(self, ):
+        """Start the configeditor
+
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        self.rw = ReleaseWin(FILETYPES["mayamainscene"])
+        self.rw.show()
