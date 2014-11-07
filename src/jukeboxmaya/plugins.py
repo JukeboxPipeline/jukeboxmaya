@@ -3,9 +3,9 @@ import abc
 from jukeboxcore.log import get_logger
 log = get_logger(__name__)
 
+import jukeboxmaya
 from jukeboxcore.plugins import JB_Plugin, JB_StandalonePlugin, JB_StandaloneGuiPlugin, PluginManager
 from jukeboxmaya.constants import BUILTIN_PLUGIN_PATH
-from jukeboxmaya.main import STANDALONE_INITIALIZED
 
 
 class JB_MayaPlugin(JB_Plugin):
@@ -25,7 +25,7 @@ class JB_MayaPlugin(JB_Plugin):
         """
         super(JB_MayaPlugin, self)._load()
         try:
-            if not STANDALONE_INITIALIZED:
+            if not jukeboxmaya.STANDALONE_INITIALIZED:
                 self.init_ui()
         except Exception:
             log.exception("Load Ui failed!")
@@ -37,7 +37,7 @@ class JB_MayaPlugin(JB_Plugin):
         """
         super(JB_MayaPlugin, self)._unload()
         try:
-            if not STANDALONE_INITIALIZED:
+            if not jukeboxmaya.STANDALONE_INITIALIZED:
                 self.uninit_ui()
         except Exception:
             log.exception("Unload Ui failed!")

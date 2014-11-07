@@ -148,13 +148,11 @@ def main_func(args=None):
     :rtype: None
     :raises: None
     """
-    # initialize maya standalone so cmds commands work properly
-    import maya.standalone
-    try:
-        guimain.init_gui()
-        maya.standalone.initialize()
-    except RuntimeError:
-        pass
+    # we have to initialize a gui even if we dont need one right now.
+    # as soon as you call maya.standalone.initialize(), a QApplication
+    # with type Tty is created. This is the type for conosle apps.
+    # Because i have not found a way to replace that, we just init the gui.
+    guimain.init_gui()
 
     main.init()
     launcher = Launcher()
