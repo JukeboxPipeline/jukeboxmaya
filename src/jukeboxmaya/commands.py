@@ -1,6 +1,5 @@
 """Wrappers around common maya commands.
-These functions are inteded to be used in :class:`jukeboxcore.actions.ActionUnit`s.
-Th
+These functions are inteded to be used in :class:`jukeboxcore.actions.ActionUnit`.
 """
 import maya.cmds as cmds
 
