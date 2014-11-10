@@ -5,6 +5,8 @@ import os
 import mock
 import pytest
 
+import jukeboxmaya
+
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_test():
