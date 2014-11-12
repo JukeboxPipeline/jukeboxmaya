@@ -23,6 +23,8 @@ def setup_test(request):
     # as maya standalone gets initialized the coverage produces bugs
     # so for now, we add this hacky fix.
     # I read that using --timid for coverage might solve the problem, but it does not
+    # somehow the warning only shows up with tox. i don't know why though. maybe just the
+    # way the capture log works differently
     def fin():
         from coverage import collector
         colls =  collector.Collector._collectors
