@@ -45,7 +45,6 @@ def init():
     :rtype: None
     :raises: None
     """
-    #global STANDALONE_INITIALIZED
     main.init_environment()
     try:
         maya.standalone.initialize()
