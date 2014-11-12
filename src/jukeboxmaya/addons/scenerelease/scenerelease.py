@@ -7,7 +7,7 @@ from jukeboxcore.release import ReleaseActions
 from jukeboxcore.gui.widgets.releasewin import ReleaseWin
 from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
 from jukeboxmaya.mayapylauncher import mayapy_launcher
-from jukeboxmaya.commands import open_scene, save_scene, import_all_references
+from jukeboxmaya.commands import open_scene, save_scene, import_all_references, update_scenenode
 
 
 class OptionWidget(QtGui.QWidget):
@@ -80,21 +80,26 @@ class SceneReleaseActions(ReleaseActions):
         :raises: None
         """
         cleanups = []
+        open_unit = ActionUnit(name="Open",
+                               description="Open the maya scene.",
+                               actionfunc=open_scene)
+        cleanups.append(open_unit)
         if self._option_widget.import_references():
-            open_unit = ActionUnit(name="Open",
-                                   description="Open the maya scene.",
-                                   actionfunc=open_scene)
             import_unit = ActionUnit(name="Import references",
                                      description="Import all references in the scene.",
                                      actionfunc=import_all_references,
                                      depsuccess=[open_unit])
-            save_unit = ActionUnit(name="Save",
-                                   description="Save the scene.",
-                                   actionfunc=save_scene,
-                                   depsuccess=[import_unit])
-            cleanups.append(open_unit)
             cleanups.append(import_unit)
-            cleanups.append(save_unit)
+        update_scenenode_unit = ActionUnit(name="Update Scene Node",
+                                           description="Change the id from the jbscene node from work to releasefile.",
+                                           actionfunc=update_scenenode,
+                                           depsuccess=[open_unit])
+        cleanups.append(update_scenenode_unit)
+        save_unit = ActionUnit(name="Save",
+                               description="Save the scene.",
+                               actionfunc=save_scene,
+                               depsuccess=[update_scenenode_unit])
+        cleanups.append(save_unit)
         return ActionCollection(cleanups)
 
     def option_widget(self, ):
