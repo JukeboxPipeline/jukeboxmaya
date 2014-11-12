@@ -39,7 +39,7 @@ with open(initfile) as fp:
     exec(fp.read(), about)
 
 long_description = read('README.rst', 'HISTORY.rst')
-install_requires = ['jukebox-core']
+install_requires = ['jukebox-core>=2.0.0']
 tests_require = ['pytest', 'mock']
 
 
