@@ -58,4 +58,6 @@ def get_current_scene_node():
     if not l:
         return
     else:
-        return l[0]
+        for n in l:
+            if not cmds.referenceQuery(n, isNodeReferenced=True):
+                return n

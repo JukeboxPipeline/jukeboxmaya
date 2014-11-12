@@ -296,5 +296,5 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
             return Mock()
 
-MOCK_MODULES = ['maya.cmds', 'maya.OpenMayaMPx', 'maya.OpenMaya', 'maya.OpenMayaUI', 'maya']
+MOCK_MODULES = ['maya.cmds', 'maya.standalone', 'maya.OpenMayaMPx', 'maya.OpenMaya', 'maya.OpenMayaUI', 'maya']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)

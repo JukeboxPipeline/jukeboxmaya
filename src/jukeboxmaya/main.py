@@ -4,9 +4,11 @@ Befor you use maya with our pipeline, call mayainit at least once. Usually the l
 """
 import os
 
+import maya.standalone
 import maya.cmds as cmds
 
 from jukeboxcore import main
+import jukeboxmaya
 from jukeboxmaya.constants import MAYA_PLUGIN_PATH
 from jukeboxmaya.plugins import MayaPluginManager
 from jukeboxmaya.menu import MenuManager
@@ -44,8 +46,14 @@ def init():
     :raises: None
     """
     main.init_environment()
-    mm = MenuManager.get()
-    mm.create_menu("Jukebox", tearOff=True)
+    try:
+        maya.standalone.initialize()
+        jukeboxmaya.STANDALONE_INITIALIZED = True
+    except RuntimeError as e:
+        jukeboxmaya.STANDALONE_INITIALIZED = False
+        if str(e) == "maya.standalone may only be used from an external Python interpreter":
+            mm = MenuManager.get()
+            mm.create_menu("Jukebox", tearOff=True)
     # load plugins
     pmanager = MayaPluginManager.get()
     pmanager.load_plugins()

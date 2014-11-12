@@ -3,6 +3,8 @@ from weakref import WeakValueDictionary
 
 import maya.cmds as cmds
 
+from jukeboxcore.log import get_logger
+log = get_logger(__name__)
 from jukeboxcore import errors
 
 

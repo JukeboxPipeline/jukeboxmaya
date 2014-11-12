@@ -16,6 +16,28 @@ class MayaWidgetToolTip(JB_MayaPlugin):
     description = "ToolTip for selecting open windows"
 
     def init(self, ):
+        """Initialize the plugin. Do nothing.
+
+        This function gets called when the plugin is loaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def uninit(self, ):
+        """Uninitialize the plugin. Do nothing
+
+        This function gets called when the plugin is unloaded by the plugin manager.
+
+        :returns:
+        :rtype:
+        :raises:
+        """
+        pass
+
+    def init_ui(self, ):
         """Create the tooltip in the sidebar
 
         :returns: None
@@ -30,17 +52,7 @@ class MayaWidgetToolTip(JB_MayaPlugin):
         self.lay.addWidget(self.tool_pb)
         self.tool_pb.clicked.connect(self.tooltip.show)
 
-    def get_maya_sidebar(self, ):
-        """Return the wrapped maya sidebar
-
-        :returns: the wrapped sidebar
-        :rtype: QObject
-        :raises: None
-        """
-        lay = main.wrap_maya_ui('MayaWindow|toolBar7|MainToolboxLayout|frameLayout5|flowLayout2')
-        return lay
-
-    def uninit(self):
+    def uninit_ui(self):
         """Delete the tooltip
 
         :returns: None
@@ -50,3 +62,13 @@ class MayaWidgetToolTip(JB_MayaPlugin):
         self.lay.removeWidget(self.tool_pb)
         self.tooltip.deleteLater()
         self.tool_pb.deleteLater()
+
+    def get_maya_sidebar(self, ):
+        """Return the wrapped maya sidebar
+
+        :returns: the wrapped sidebar
+        :rtype: QObject
+        :raises: None
+        """
+        lay = main.wrap_maya_ui('MayaWindow|toolBar7|MainToolboxLayout|frameLayout5|flowLayout2')
+        return lay
