@@ -14,25 +14,24 @@ class JB_SceneNode(OpenMayaMPx.MPxNode):
     kPluginNodeId = OpenMaya.MTypeId(0x14B01)
 
     def __init__(self):
-        OpenMayaMPx.MPxNode.__init__(self)
+        super(JB_SceneNode, self).__init__()
 
+    @classmethod
+    def initialize(cls):
+        nAttr = OpenMaya.MFnNumericAttribute()
 
-def creator():
-    return OpenMayaMPx.asMPxPtr(JB_SceneNode())
+        cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
+        cls.addAttribute(cls.taskfile_id)
 
-
-def initialize():
-    #tAttr = OpenMaya.MFnTypedAttribute()
-    nAttr = OpenMaya.MFnNumericAttribute()
-
-    JB_SceneNode.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
-    JB_SceneNode.addAttribute(JB_SceneNode.taskfile_id)
+    @classmethod
+    def creator(cls):
+        return OpenMayaMPx.asMPxPtr(cls())
 
 
 def initializePlugin(obj):
     plugin = OpenMayaMPx.MFnPlugin(obj, 'David Zuber', '1.0', 'Any')
     try:
-        plugin.registerNode(JB_SceneNode.kNodeName, JB_SceneNode.kPluginNodeId, creator, initialize)
+        plugin.registerNode(JB_SceneNode.kNodeName, JB_SceneNode.kPluginNodeId, JB_SceneNode.creator, JB_SceneNode.initialize)
     except:
         raise PluginInitError('Failed to register %s node' % JB_SceneNode.kNodeName)
 
