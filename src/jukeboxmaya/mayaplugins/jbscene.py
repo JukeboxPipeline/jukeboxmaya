@@ -52,9 +52,7 @@ def get_current_scene_node():
     :rtype: str | None
     :raises: None
     """
-    rootns = ':'
-    nscontent = cmds.namespaceInfo(rootns, listNamespace=True, listOnlyDependencyNodes=True)
-    l = cmds.ls(nscontent, type='jb_sceneNode')
+    l = cmds.ls(type='jb_sceneNode')
     if not l:
         return
     else:
