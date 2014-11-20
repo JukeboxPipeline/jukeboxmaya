@@ -21,6 +21,7 @@ class JB_SceneNode(OpenMayaMPx.MPxNode):
         nAttr = OpenMaya.MFnNumericAttribute()
 
         cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
+        nAttr.setConnectable(False)
         cls.addAttribute(cls.taskfile_id)
 
     @classmethod
