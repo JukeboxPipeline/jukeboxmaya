@@ -13,7 +13,6 @@ Jukebox Maya
 
 
 
-
 Jukebox Pipeline for Maya. Jukebox Pipeline is a framework for developing pipeline tools for different softwares in python.
 It is centered around the `Jukebox Core Package <https://pypi.python.org/pypi/jukebox-core>`_.
 
