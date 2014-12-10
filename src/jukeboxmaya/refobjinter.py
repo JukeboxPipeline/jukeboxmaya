@@ -13,7 +13,7 @@ from jukeboxmaya.mayaplugins.jbreftrack import JB_ReftrackNode
 from jukeboxmaya.reftypes.asset import AssetReftypeInterface
 
 
-class MayaRefobjInter(RefobjInterface):
+class MayaRefobjInterface(RefobjInterface):
     """Interface to interact mainly with the :class:`JB_ReftrackNode`.
 
     To interact with the content of each entity, there is a special reftyp interface that
@@ -32,7 +32,7 @@ class MayaRefobjInter(RefobjInterface):
 
         :raises: None
         """
-        super(MayaRefobjInter, self).__init__()
+        super(MayaRefobjInterface, self).__init__()
 
     def exists(self, refobj):
         """Check if the given :class:`JB_ReftrackNode` is still in the scene
@@ -264,3 +264,29 @@ class MayaRefobjInter(RefobjInterface):
         """
         cmds.connectAttr("%s.scenenode" % refobj, "%s.reftrack" % scenenode, force=True)
         cmds.connectAttr("%s.taskfile_id" % scenenode, "%s.taskfile_id" % refobj, force=True)
+
+    def fetch_action_restriction(self, reftrack, action):
+        """Return wheter the given action is restricted for the given reftrack
+
+        available actions are:
+
+           ``reference``, ``load``, ``unload``, ``replace``, ``import_reference``, ``import_taskfile``
+
+        If action is not available, True is returned.
+
+        Replace is always restricted for nested references!
+
+        :param reftrack: the reftrack to query
+        :type reftrack: :class:`Reftrack`
+        :param action: the action to check.
+        :type action: str
+        :returns: True, if the action is restricted
+        :rtype: :class:`bool`
+        :raises: None
+        """
+        if action == 'replace' and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
+            tracknode = reftrack.get_refobj()
+            restricted = cmds.referenceQuery(tracknode, isNodeReferenced=True)
+            if restricted:
+                return True
+        return super(MayaRefobjInterface, self).fetch_action_restriction(reftrack, action)
