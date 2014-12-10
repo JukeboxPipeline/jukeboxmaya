@@ -22,7 +22,6 @@ class JB_SceneNode(OpenMayaMPx.MPxNode):
         msgAttr = OpenMaya.MFnMessageAttribute()
 
         cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
-        nAttr.setConnectable(False)
         cls.addAttribute(cls.taskfile_id)
 
         # reftrack link

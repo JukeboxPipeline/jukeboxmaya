@@ -121,7 +121,7 @@ def update_scenenode(f):
                           typ=tfi.typ)
 
     cmds.setAttr('%s.taskfile_id' % n, lock=False)
-    cmds.setAttr('%s.taskfile_id' % n, tf.id)
+    cmds.setAttr('%s.taskfile_id' % n, tf.pk)
     cmds.setAttr('%s.taskfile_id' % n, lock=True)
     msg = "Successfully updated scene node to %s" % tf.id
     return ActionStatus(ActionStatus.SUCCESS, msg)

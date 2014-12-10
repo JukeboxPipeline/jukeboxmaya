@@ -28,6 +28,7 @@ class JB_ReftrackNode(OpenMayaMPx.MPxNode):
         enumAttr = OpenMaya.MFnEnumAttribute()
         msgAttr = OpenMaya.MFnMessageAttribute()
         typedAttr = OpenMaya.MFnTypedAttribute()
+        nAttr = OpenMaya.MFnNumericAttribute()
 
         # typ enum attribute
         cls.typ_attr = enumAttr.create('type', 'typ', 0)
@@ -61,6 +62,10 @@ class JB_ReftrackNode(OpenMayaMPx.MPxNode):
         cls.scenenode_attr = msgAttr.create("scenenode", "scene")
         msgAttr.setWritable(False)
         cls.addAttribute(cls.scenenode_attr)
+
+        # the taskfile_id in case, we do not have a jb_scene node to connect to
+        cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
+        cls.addAttribute(cls.taskfile_id)
 
     @classmethod
     def creator(cls):
