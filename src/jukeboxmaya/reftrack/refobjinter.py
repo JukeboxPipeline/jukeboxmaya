@@ -10,7 +10,7 @@ from jukeboxcore import djadapter
 from jukeboxcore.reftrack import RefobjInterface, Reftrack
 from jukeboxmaya.mayaplugins import jbscene
 from jukeboxmaya.mayaplugins.jbreftrack import JB_ReftrackNode
-from jukeboxmaya.reftypes.asset import AssetReftypeInterface
+from jukeboxmaya.reftrack.asset import AssetReftypeInterface
 
 
 class MayaRefobjInterface(RefobjInterface):
