@@ -36,3 +36,24 @@ def preserve_selection():
         yield
     finally:
         cmds.select(sl, replace=True)
+
+
+def get_top_namespace(node):
+    """Return the top namespace of the given node
+
+    If the node has not namespace (only root), ":" is returned.
+    Else the top namespace (after root) is returned
+
+    :param node: the node to query
+    :type node: str
+    :returns: The top level namespace.
+    :rtype: str
+    :raises: None
+    """
+    name = node.rsplit("|", 1)[-1]  # get the node name, in case we get a dagpath
+    name = name.lstrip(":")  # strip the root namespace
+    if ":" not in name:  # if there is no namespace return root
+        return ":"
+    else:
+        # get the top namespace
+        return name.partition(":")[0]
