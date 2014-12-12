@@ -55,7 +55,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: refobj | None
         :raises: None
         """
-        c = cmds.listConnections("%s.parent" % refobj, s=False)
+        c = cmds.listConnections("%s.parent" % refobj, source=False)
         return c[0] if c else None
 
     def set_parent(self, child, parent):
@@ -69,14 +69,12 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
+        parents = cmds.listConnections("%s.parent" % child, plugs=True, source=True)
+        if parents:
+            # there is only one parent at a time
+            cmds.disconnectAttr("%s.parent" % child, "%s" % parents[0])
         if parent:
             cmds.connectAttr("%s.parent" % child, "%s.children" % parent, force=True, nextAvailable=True)
-        else:
-            parents = cmds.listConnections("%s.parent" % child, plugs=True, source=True)
-            if not parents:
-                return
-            # there is only one parent at a time
-            cmds.disconnectAttr("%s.parent" % child, "%s.children" % parents[0], nextAvailable=True)
 
     def get_children(self, refobj):
         """Get the children reftrack nodes of the given node

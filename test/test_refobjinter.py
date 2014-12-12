@@ -42,3 +42,30 @@ def parent_reftrack(reftrack_nodes):
                           ("jb_reftrack3", "jb_reftrack2")])
 def test_get_parent(nodename, parent, parent_reftrack, mrefobjinter):
     assert mrefobjinter.get_parent(nodename) == parent
+
+
+def test_set_parent(reftrack_nodes, mrefobjinter):
+    mrefobjinter.set_parent(reftrack_nodes[1], reftrack_nodes[0])
+    assert cmds.listConnections("%s.parent" % reftrack_nodes[1], source=False) == [reftrack_nodes[0]]
+    mrefobjinter.set_parent(reftrack_nodes[1], None)
+    assert cmds.listConnections("%s.parent" % reftrack_nodes[1], source=False) is None
+    mrefobjinter.set_parent(reftrack_nodes[1], reftrack_nodes[0])
+    mrefobjinter.set_parent(reftrack_nodes[2], reftrack_nodes[1])
+    assert cmds.listConnections("%s.parent" % reftrack_nodes[2], source=False) == [reftrack_nodes[1]]
+    mrefobjinter.set_parent(reftrack_nodes[0], None)
+    assert cmds.listConnections("%s.parent" % reftrack_nodes[0], source=False) is None
+    mrefobjinter.set_parent(reftrack_nodes[2], reftrack_nodes[0])
+    assert cmds.listConnections("%s.children" % reftrack_nodes[0], destination=False) == [reftrack_nodes[1], reftrack_nodes[2]]
+    assert cmds.listConnections("%s.children" % reftrack_nodes[1], destination=False) is None
+
+
+def test_get_children(reftrack_nodes, mrefobjinter):
+    mrefobjinter.set_parent(reftrack_nodes[1], reftrack_nodes[0])
+    mrefobjinter.set_parent(reftrack_nodes[2], reftrack_nodes[0])
+    assert mrefobjinter.get_children(reftrack_nodes[0]) == [reftrack_nodes[1], reftrack_nodes[2]]
+    assert mrefobjinter.get_children(reftrack_nodes[1]) == []
+    assert mrefobjinter.get_children(reftrack_nodes[2]) == []
+    mrefobjinter.set_parent(reftrack_nodes[2], reftrack_nodes[1])
+    assert mrefobjinter.get_children(reftrack_nodes[0]) == [reftrack_nodes[1]]
+    assert mrefobjinter.get_children(reftrack_nodes[1]) == [reftrack_nodes[2]]
+    assert mrefobjinter.get_children(reftrack_nodes[2]) == []
