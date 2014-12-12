@@ -3,6 +3,7 @@ import os
 import pytest
 import maya.cmds as cmds
 
+from jukeboxcore.reftrack import Reftrack
 from jukeboxmaya.reftrack import refobjinter
 
 
@@ -161,3 +162,20 @@ def test_get_reference(ref_file_with_reftrack, mrefobjinter):
     assert mrefobjinter.get_reference(n) is None
     mrefobjinter.set_reference(n, ref_file_with_reftrack)
     assert mrefobjinter.get_reference(n) == ref_file_with_reftrack
+
+
+def test_get_status(ref_file_with_reftrack, mrefobjinter):
+    n = cmds.createNode("jb_reftrack", name="jb_reftrack1")
+    assert mrefobjinter.get_status(n) == Reftrack.IMPORTED
+    mrefobjinter.set_reference(n, ref_file_with_reftrack)
+    assert mrefobjinter.get_status(n) == Reftrack.LOADED
+    cmds.file(unloadReference=ref_file_with_reftrack)
+    assert mrefobjinter.get_status(n) == Reftrack.UNLOADED
+
+
+def test_connect_scenenode(reftrack_nodes, mrefobjinter):
+    sn = cmds.createNode("jb_sceneNode")
+    cmds.setAttr("%s.taskfile_id" % sn, 1)
+    mrefobjinter.connect_reftrack_scenenode(reftrack_nodes[0], sn)
+    assert cmds.listConnections("%s.scenenode" % reftrack_nodes[0], source=False, plugs=True) == ["%s.reftrack" % sn]
+    assert cmds.listConnections("%s.taskfile_id" % reftrack_nodes[0], destination=False, plugs=True) == ["%s.taskfile_id" % sn]
