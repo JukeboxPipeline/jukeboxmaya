@@ -165,6 +165,18 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
+        # disconnect all connections so we do only delete the refobj and nothing else
+        destconns = cmds.listConnections(refobj, connections=True, plugs=True, source=0)
+        srcconns = cmds.listConnections(refobj, connections=True, plugs=True, destination=0)
+        if destconns:
+            for i in range(0, len(destconns), 2):
+                source, dest = destconns[i], destconns[i+1]
+                cmds.disconnectAttr(source, dest)
+        if srcconns:
+            for i in range(0, len(srcconns), 2):
+                source, dest = srcconns[i+1], srcconns[i]
+                cmds.disconnectAttr(source, dest)
+        # delete the node
         cmds.delete(refobj)
 
     def get_all_refobjs(self, ):
@@ -183,7 +195,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: :class:`jukeboxcore.djadapter.models.Asset` | :class:`jukeboxcore.djadapter.models.Shot` | None
         :raises: :class:`djadapter.models.TaskFile.DoesNotExist`
         """
-        n = jbscene.get_current_scene_node
+        n = jbscene.get_current_scene_node()
         if not n:
             return None
         tfid = cmds.getAttr("n.taskfile_id")
