@@ -216,9 +216,9 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        cmds.connectAttr("%s.referencenode" % refobj, "%s.message" % reference, force=True)
+        cmds.connectAttr("%s.message" % reference, "%s.referencenode" % refobj, force=True)
         ns = cmds.referenceQuery(reference, namespace=True)
-        cmds.setAttr("%s.namespace" % refobj, ns)
+        cmds.setAttr("%s.namespace" % refobj, ns, type="string")
 
     def get_reference(self, refobj):
         """Return the reference node that the reftrack node is connected to or None if it is imported.

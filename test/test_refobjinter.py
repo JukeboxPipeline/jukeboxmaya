@@ -148,3 +148,16 @@ def test_get_all_refobjs(ref_file_with_reftrack, mrefobjinter):
     assert len(allnodes) == 6
     for n in ["jb_reftrack1", "jb_reftrack2", "jb_reftrack3", "ref1:jb_reftrack1", "ref1:jb_reftrack2", "ref1:jb_reftrack3"]:
         assert n in allnodes
+
+
+def test_set_reference(ref_file_with_reftrack, mrefobjinter):
+    n = cmds.createNode("jb_reftrack", name="jb_reftrack1")
+    mrefobjinter.set_reference(n, ref_file_with_reftrack)
+    assert cmds.listConnections("%s.referencenode" % n, d=False) == [ref_file_with_reftrack]
+
+
+def test_get_reference(ref_file_with_reftrack, mrefobjinter):
+    n = cmds.createNode("jb_reftrack", name="jb_reftrack1")
+    assert mrefobjinter.get_reference(n) is None
+    mrefobjinter.set_reference(n, ref_file_with_reftrack)
+    assert mrefobjinter.get_reference(n) == ref_file_with_reftrack
