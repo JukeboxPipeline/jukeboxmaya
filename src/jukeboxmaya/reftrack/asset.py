@@ -1,5 +1,5 @@
 """Implementation of :class:`jukeboxcore.reftrack.ReftypeInterface` for Assets."""
-from collectiosn import defaultdict
+from collections import defaultdict
 
 import maya.cmds as cmds
 

@@ -55,7 +55,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: refobj | None
         :raises: None
         """
-        c = cmds.listConnections("%s.parent" % refobj, d=False)
+        c = cmds.listConnections("%s.parent" % refobj, s=False)
         return c[0] if c else None
 
     def set_parent(self, child, parent):

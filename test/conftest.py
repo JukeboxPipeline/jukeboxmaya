@@ -3,6 +3,7 @@
 import os
 
 import pytest
+import maya.cmds as cmds
 
 import jukeboxmaya.main
 
@@ -31,3 +32,9 @@ def setup_test(request):
         if len(colls) == 2:
             collector.Collector._collectors = list(reversed(colls))
     request.addfinalizer(fin)
+
+
+@pytest.fixture(scope="function")
+def new_scene():
+    """Start with a new scene"""
+    cmds.file(force=True, new=True)
