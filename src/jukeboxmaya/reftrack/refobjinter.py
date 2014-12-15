@@ -198,7 +198,7 @@ class MayaRefobjInterface(RefobjInterface):
         n = jbscene.get_current_scene_node()
         if not n:
             return None
-        tfid = cmds.getAttr("n.taskfile_id")
+        tfid = cmds.getAttr("%s.taskfile_id" % n)
         try:
             tf = djadapter.taskfiles.get(pk=tfid)
             return tf.task.element

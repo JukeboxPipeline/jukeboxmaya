@@ -3,6 +3,7 @@ import os
 import pytest
 import maya.cmds as cmds
 
+from jukeboxcore import djadapter
 from jukeboxcore.reftrack import Reftrack
 from jukeboxmaya.reftrack import refobjinter
 
@@ -179,3 +180,40 @@ def test_connect_scenenode(reftrack_nodes, mrefobjinter):
     mrefobjinter.connect_reftrack_scenenode(reftrack_nodes[0], sn)
     assert cmds.listConnections("%s.scenenode" % reftrack_nodes[0], source=False, plugs=True) == ["%s.reftrack" % sn]
     assert cmds.listConnections("%s.taskfile_id" % reftrack_nodes[0], destination=False, plugs=True) == ["%s.taskfile_id" % sn]
+
+
+params = [("assettaskfiles", i) for i in range(0, 32, 4)]
+params.extend([("shottaskfiles", i) for i in range(0, 32, 4)])
+
+
+@pytest.mark.parametrize("attr,index", params)
+def test_current_element(attr, index, new_scene, djprj, mrefobjinter):
+    node = cmds.createNode("jb_sceneNode")
+    tf = getattr(djprj, attr)[index]
+    cmds.setAttr("%s.taskfile_id" % node, tf.pk)
+    assert mrefobjinter.get_current_element() == tf.task.element
+
+
+def test_current_element_raises(new_scene, mrefobjinter):
+    node = cmds.createNode("jb_sceneNode")
+    cmds.setAttr("%s.taskfile_id" % node, -123)
+    with pytest.raises(djadapter.models.TaskFile.DoesNotExist):
+        mrefobjinter.get_current_element()
+
+
+@pytest.mark.parametrize("index", [i for i in range(0, 32, 4)])
+def test_get_taskfile_connected(index, new_scene, djprj, mrefobjinter):
+    scenenode = cmds.createNode("jb_sceneNode")
+    tf = djprj.assettaskfiles[index]
+    cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
+    refobj = cmds.createNode("jb_reftrack")
+    mrefobjinter.connect_reftrack_scenenode(refobj, scenenode)
+    mrefobjinter.get_taskfile(refobj)
+
+
+@pytest.mark.parametrize("index", [i for i in range(0, 32, 4)])
+def test_get_taskfile_unconnected(index, new_scene, djprj, mrefobjinter):
+    tf = djprj.assettaskfiles[index]
+    refobj = cmds.createNode("jb_reftrack")
+    cmds.setAttr("%s.taskfile_id" % refobj, tf.pk)
+    mrefobjinter.get_taskfile(refobj)
