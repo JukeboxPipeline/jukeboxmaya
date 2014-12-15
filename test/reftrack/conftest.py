@@ -45,7 +45,7 @@ def parent_reftrack(reftrack_nodes):
 
 
 @pytest.fixture(scope="function")
-def file_with_reftrack(request, tmpdir, parent_reftrack, mrefobjinter):
+def file_with_reftrack(request, tmpdir, parent_reftrack):
     """Return a filename to a scene with the reftracks from parent_reftrack fixture."""
     fn = tmpdir.join("test1.mb")
     f = cmds.file(rename=fn.dirname)
