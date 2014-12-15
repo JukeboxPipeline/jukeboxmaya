@@ -58,12 +58,11 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: str
         :raises: None
         """
-        refobjinter = self.get_refobjinter()
         # work in root namespace
         with common.preserve_namespace(":"):
             jbfile = JB_File(taskfileinfo)
             filepath = jbfile.get_fullpath()
-            ns_suggestion = reftrack.get_namespace(refobj, refobjinter)
+            ns_suggestion = reftrack.get_namespace(taskfileinfo)
             reffile = cmds.file(filepath, reference=True, namespace=ns_suggestion)
             node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
             ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
@@ -73,8 +72,8 @@ class AssetReftypeInterface(ReftypeInterface):
                 return node  # no need for a top group if there are not dagnodes to group
             # group the dagnodes
             with common.preserve_namespace(ns):
-                grpname = reftrack.get_groupname(refobj, refobjinter)
-                grpnode = cmds.createNode(grpname)  # create a group node
+                grpname = reftrack.get_groupname(taskfileinfo)
+                grpnode = cmds.createNode("jb_asset", name=grpname)  # create a group node
                 cmds.group(dagcontent, uag=grpnode)  # group the contents
             return node
 
@@ -170,12 +169,11 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
-        refobjinter = self.get_refobjinter()
         # work in root namespace
         with common.preserve_namespace(":"):
             jbfile = JB_File(taskfileinfo)
             filepath = jbfile.get_fullpath()
-            ns_suggestion = reftrack.get_namespace(refobj, refobjinter)
+            ns_suggestion = reftrack.get_namespace(taskfileinfo)
             nodes = cmds.file(filepath, i=True, namespace=ns_suggestion, returnNewNodes=True)  # import
             assert nodes, 'Nothing was imported! this is unusual!'
             ns = common.get_top_namespace(nodes[0])  # get the actual namespace
@@ -184,7 +182,7 @@ class AssetReftypeInterface(ReftypeInterface):
                 return  # no need for a top group if there are not dagnodes to group
             # group the dagnodes in the new namespace
             with common.preserve_namespace(ns):
-                grpname = reftrack.get_groupname(refobj, refobjinter)
+                grpname = reftrack.get_groupname(taskfileinfo)
                 grpnode = cmds.createNode(grpname)  # create a group node
                 cmds.group(dagcontent, uag=grpnode)  # group the contents
             return

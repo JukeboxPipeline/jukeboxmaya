@@ -7,17 +7,24 @@ from jukeboxcore.filesys import TaskFileInfo, JB_File
 
 
 @pytest.mark.parametrize("refobj", [("a", "b", "c", "d", None, "asdf")])
-def test_is_replaceable(refobj, typinter):
+def test_is_replaceable(refobj, assettypinter):
     # assert always returns True
-    assert typinter.is_replaceable(refobj) is True
+    assert assettypinter.is_replaceable(refobj) is True
 
 
 @pytest.fixture(scope="function")
-def taskfile_with_reftrack(request, new_scene, djprj):
+def taskfile_with_dagnodes(request, new_scene, djprj, mrefobjinter):
+    """Create a scene with a scenenode for djprj.assettaskfiles[0] and
+    a dag transform node "testdagnode".
+    """
+    cmds.createNode("transform", name="testdagnode")
     tf = djprj.assettaskfiles[0]
+    scenenode = cmds.createNode("jb_sceneNode")
+    cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
     tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
                                descriptor=tf.descriptor, typ=tf.typ)
     jb = JB_File(tfi)
+    jb.create_directory()
     f = cmds.file(rename=jb.get_fullpath())
     cmds.file(save=True, type='mayaBinary')
 
@@ -26,3 +33,96 @@ def taskfile_with_reftrack(request, new_scene, djprj):
 
     request.addfinalizer(fin)
     return f
+
+
+@pytest.fixture(scope="function")
+def taskfile_without_dagnodes(request, new_scene, djprj, mrefobjinter):
+    """Create a scene with a scenenode for djprj.assettaskfiles[0].
+    """
+    tf = djprj.assettaskfiles[0]
+    scenenode = cmds.createNode("jb_sceneNode")
+    cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    jb = JB_File(tfi)
+    jb.create_directory()
+    f = cmds.file(rename=jb.get_fullpath())
+    cmds.file(save=True, type='mayaBinary')
+
+    def fin():
+        os.remove(f)
+
+    request.addfinalizer(fin)
+    return f
+
+
+def test_reference_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    cmds.namespace(add="foo")
+    cmds.namespace(set="foo")
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
+    ns = cmds.referenceQuery(refnode, namespace=True)
+    ns = cmds.namespaceInfo(ns, fullName=True)
+    assert "%s:testdagnode" % ns in cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
+    assert cmds.listRelatives("%s:testdagnode" % ns, parent=True, type="jb_asset")
+
+    # reference2
+    refobj2 = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj2, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    refnode2 = cmds.referenceQuery(taskfile_with_dagnodes + "{1}", referenceNode=True)
+    ns2 = cmds.referenceQuery(refnode2, namespace=True)
+    ns2 = cmds.namespaceInfo(ns2, fullName=True)
+    assert refnode2 != refnode
+    assert ns2 != ns
+    assert "%s:testdagnode" % ns2 in cmds.namespaceInfo(ns2, listOnlyDependencyNodes=True)
+    assert cmds.listRelatives("%s:testdagnode" % ns2, parent=True, type="jb_asset")
+
+
+def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    cmds.namespace(add="foo")
+    cmds.namespace(set="foo")
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    refnode = cmds.referenceQuery(taskfile_without_dagnodes, referenceNode=True)
+    ns = cmds.referenceQuery(refnode, namespace=True)
+    ns = cmds.namespaceInfo(ns, fullName=True)
+    # assert no group created
+    content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
+    assert not cmds.ls(content, type="jb_asset")
+
+    # reference2
+    refobj2 = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj2, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    refnode2 = cmds.referenceQuery(taskfile_without_dagnodes + "{1}", referenceNode=True)
+    ns2 = cmds.referenceQuery(refnode2, namespace=True)
+    ns2 = cmds.namespaceInfo(ns2, fullName=True)
+    assert refnode2 != refnode
+    assert ns2 != ns
+    # assert no group created
+    content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
+    assert not cmds.ls(content, type="jb_asset")

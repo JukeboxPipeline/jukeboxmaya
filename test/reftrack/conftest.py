@@ -14,7 +14,7 @@ def mrefobjinter():
 
 
 @pytest.fixture(scope="function")
-def typinter(mrefobjinter):
+def assettypinter(mrefobjinter):
     "Return a fresh AssetReftypeInterface"
     return asset.AssetReftypeInterface(mrefobjinter)
 
