@@ -19,10 +19,15 @@ class JB_SceneNode(OpenMayaMPx.MPxNode):
     @classmethod
     def initialize(cls):
         nAttr = OpenMaya.MFnNumericAttribute()
+        msgAttr = OpenMaya.MFnMessageAttribute()
 
         cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
-        nAttr.setConnectable(False)
         cls.addAttribute(cls.taskfile_id)
+
+        # reftrack link
+        cls.reftrack_attr = msgAttr.create("reftrack", "rt")
+        msgAttr.setReadable(False)
+        cls.addAttribute(cls.reftrack_attr)
 
     @classmethod
     def creator(cls):
@@ -57,5 +62,5 @@ def get_current_scene_node():
         return
     else:
         for n in l:
-            if not cmds.referenceQuery(n, isNodeReferenced=True):
+            if not cmds.listConnections("%s.reftrack" % n, d=False):
                 return n
