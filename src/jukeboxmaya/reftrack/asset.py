@@ -71,10 +71,8 @@ class AssetReftypeInterface(ReftypeInterface):
             if not dagcontent:
                 return node  # no need for a top group if there are not dagnodes to group
             # group the dagnodes
-            with common.preserve_namespace(ns):
-                grpname = reftrack.get_groupname(taskfileinfo)
-                grpnode = cmds.createNode("jb_asset", name=grpname)  # create a group node
-                cmds.group(dagcontent, uag=grpnode)  # group the contents
+            grpname = reftrack.get_groupname(taskfileinfo)
+            reftrack.group_content(dagcontent, ns, grpname, "jb_asset")
             return node
 
     def load(self, refobj, reference):
@@ -181,10 +179,8 @@ class AssetReftypeInterface(ReftypeInterface):
             if not dagcontent:
                 return  # no need for a top group if there are not dagnodes to group
             # group the dagnodes in the new namespace
-            with common.preserve_namespace(ns):
-                grpname = reftrack.get_groupname(taskfileinfo)
-                grpnode = cmds.createNode(grpname)  # create a group node
-                cmds.group(dagcontent, uag=grpnode)  # group the contents
+            grpname = reftrack.get_groupname(taskfileinfo)
+            reftrack.group_content(dagcontent, ns, grpname, "jb_asset")
             return
 
     def fetch_option_taskfileinfos(self, element):

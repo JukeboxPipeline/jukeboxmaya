@@ -1,4 +1,7 @@
 """Package for the reference workflow in maya."""
+import maya.cmds as cmds
+
+from jukeboxmaya import common
 
 
 def get_namespace(taskfileinfo):
@@ -30,3 +33,25 @@ def get_groupname(taskfileinfo):
     element = taskfileinfo.task.element
     name = element.name
     return name + "_grp"
+
+
+def group_content(content, namespace, grpname, grpnodetype):
+    """Group the given content in the given namespace under a node of type
+    grpnodetype with the name grpname
+
+    :param content: the nodes to group
+    :type content: :class:`list`
+    :param namespace: the namespace to use
+    :type namespace: str | None
+    :param grpname: the name of the new grpnode
+    :type grpname: str
+    :param grpnodetype: the nodetype for the grpnode
+    :type grpnodetype: str
+    :returns: the created group node
+    :rtype: str
+    :raises: None
+    """
+    with common.preserve_namespace(namespace):
+        grpnode = cmds.createNode(grpnodetype, name=grpname) # create grp node
+        cmds.group(content, uag=grpnode) # group content
+    return grpnode

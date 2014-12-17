@@ -126,3 +126,30 @@ def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, 
     # assert no group created
     content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
     assert not cmds.ls(content, type="jb_asset")
+
+
+def test_load(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+    refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
+    cmds.file(unloadReference=refnode)
+    assert cmds.referenceQuery(refnode, isLoaded=True) is False
+    assettypinter.load(refobj, refnode)
+    assert cmds.referenceQuery(refnode, isLoaded=True) is True
+
+
+def test_unload(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+    refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
+    assert cmds.referenceQuery(refnode, isLoaded=True) is True
+    assettypinter.unload(refobj, refnode)
+    assert cmds.referenceQuery(refnode, isLoaded=True) is False
