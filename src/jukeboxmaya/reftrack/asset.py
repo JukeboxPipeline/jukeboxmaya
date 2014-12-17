@@ -175,6 +175,7 @@ class AssetReftypeInterface(ReftypeInterface):
             nodes = cmds.file(filepath, i=True, namespace=ns_suggestion, returnNewNodes=True)  # import
             assert nodes, 'Nothing was imported! this is unusual!'
             ns = common.get_top_namespace(nodes[0])  # get the actual namespace
+            cmds.setAttr("%s.namespace" % refobj, ns, type="string")
             dagcontent = cmds.ls(nodes, dag=True, ap=True)  # get only the dagnodes so we can group them
             if not dagcontent:
                 return  # no need for a top group if there are not dagnodes to group
@@ -194,17 +195,13 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: list of :class:`TaskFileInfo`
         :raises: None
         """
-        c = []
+        tfs = []
         for task in element.tasks:
             taskfiles = list(task.taskfile_set.filter(releasetype=djadapter.RELEASETYPES['release'],
                                                       typ=djadapter.FILETYPES['mayamainscene']))
-            c.extend(taskfiles)
-        tfis = []
-        for tf in c:
-            tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
-            tfis.append(tfi)
-        return c
+            tfs.extend(taskfiles)
+        tfis = [TaskFileInfo.create_from_taskfile(tf) for tf in tfs]
+        return tfis
 
     def create_options_model(self, taskfileinfos):
         """Create a new treemodel that has the taskfileinfos as internal_data of the leaves.

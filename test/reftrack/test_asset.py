@@ -22,8 +22,7 @@ def taskfile_with_dagnodes(request, djprj, mrefobjinter):
     tf = djprj.assettaskfiles[0]
     scenenode = cmds.createNode("jb_sceneNode")
     cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     jb = JB_File(tfi)
     jb.create_directory()
     f = cmds.file(rename=jb.get_fullpath())
@@ -46,8 +45,7 @@ def taskfile_with_dagnodes2(request, djprj, mrefobjinter):
     tf = djprj.assettaskfiles[1]
     scenenode = cmds.createNode("jb_sceneNode")
     cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     jb = JB_File(tfi)
     jb.create_directory()
     f = cmds.file(rename=jb.get_fullpath())
@@ -68,8 +66,7 @@ def taskfile_without_dagnodes(request, djprj, mrefobjinter):
     tf = djprj.assettaskfiles[0]
     scenenode = cmds.createNode("jb_sceneNode")
     cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     jb = JB_File(tfi)
     jb.create_directory()
     f = cmds.file(rename=jb.get_fullpath())
@@ -89,8 +86,7 @@ def test_reference_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefob
     assert cmds.namespaceInfo(absoluteName=True) == ":foo"
 
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
 
@@ -124,8 +120,7 @@ def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, 
     assert cmds.namespaceInfo(absoluteName=True) == ":foo"
 
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
 
@@ -157,8 +152,7 @@ def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, 
 def test_load(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
     cmds.file(new=True, force=True)
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
     refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
@@ -171,8 +165,7 @@ def test_load(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
 def test_unload(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
     cmds.file(new=True, force=True)
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
     refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
@@ -184,8 +177,7 @@ def test_unload(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
 def test_replace(taskfile_with_dagnodes, taskfile_with_dagnodes2, djprj, assettypinter, mrefobjinter):
     cmds.file(new=True, force=True)
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
     refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
@@ -204,8 +196,7 @@ def test_replace(taskfile_with_dagnodes, taskfile_with_dagnodes2, djprj, assetty
 def test_import_taskfile(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
     cmds.file(new=True, force=True)
     tf = djprj.assettaskfiles[0]
-    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
-                               descriptor=tf.descriptor, typ=tf.typ)
+    tfi = TaskFileInfo.create_from_taskfile(tf)
     refobj = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj, tfi)
     refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
@@ -214,3 +205,71 @@ def test_import_taskfile(taskfile_with_dagnodes, djprj, assettypinter, mrefobjin
     assettypinter.import_reference(refobj, refnode)
 
     assert cmds.referenceQuery("smurf_1:testdagnode", isNodeReferenced=True) is False
+
+
+def test_import_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    cmds.namespace(add="foo")
+    cmds.namespace(set="foo")
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo.create_from_taskfile(tf)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.import_taskfile(refobj, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    ns = cmds.getAttr("%s.namespace" % refobj)
+    assert ns == "smurf_1"
+    assert "%s:testdagnode" % ns in cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
+    assert cmds.listRelatives("%s:testdagnode" % ns, parent=True, type="jb_asset")
+
+    # reference2
+    refobj2 = mrefobjinter.create(typ="Asset")
+    assettypinter.import_taskfile(refobj2, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    ns2 = cmds.getAttr("%s.namespace" % refobj2)
+    assert ns2 == "smurf_2"
+    assert ns2 != ns
+    assert "%s:testdagnode" % ns2 in cmds.namespaceInfo(ns2, listOnlyDependencyNodes=True)
+    assert cmds.listRelatives("%s:testdagnode" % ns2, parent=True, type="jb_asset")
+
+    assert cmds.referenceQuery("smurf_1:testdagnode", isNodeReferenced=True) is False
+    assert cmds.referenceQuery("smurf_2:testdagnode", isNodeReferenced=True) is False
+
+
+def test_import_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    cmds.namespace(add="foo")
+    cmds.namespace(set="foo")
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo.create_from_taskfile(tf)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.import_taskfile(refobj, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    ns = cmds.getAttr("%s.namespace" % refobj)
+    assert ns == "smurf_1"
+    assert not cmds.ls(type="jb_asset")
+
+    # reference2
+    refobj2 = mrefobjinter.create(typ="Asset")
+    assettypinter.import_taskfile(refobj2, tfi)
+
+    # assert namespace is still the same
+    assert cmds.namespaceInfo(absoluteName=True) == ":foo"
+    ns2 = cmds.getAttr("%s.namespace" % refobj2)
+    assert ns2 == "smurf_2"
+    assert ns2 != ns
+    assert not cmds.ls(type="jb_asset")
+
+    content = cmds.namespaceInfo(ns, listNamespace=True)
+    content2 = cmds.namespaceInfo(ns2, listNamespace=True)
+    for n in content + content2:
+        assert cmds.referenceQuery(n, isNodeReferenced=True) is False
