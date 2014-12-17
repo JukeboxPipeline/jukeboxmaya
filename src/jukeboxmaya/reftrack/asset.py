@@ -153,7 +153,7 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
-        f = cmds.referenceQuery(reference, file=True)
+        f = cmds.referenceQuery(reference, filename=True)
         cmds.file(f, importReference=True)
 
     def import_taskfile(self, refobj, taskfileinfo):

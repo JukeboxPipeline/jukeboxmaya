@@ -13,7 +13,8 @@ def test_is_replaceable(refobj, assettypinter):
 
 
 @pytest.fixture(scope="function")
-def taskfile_with_dagnodes(request, new_scene, djprj, mrefobjinter):
+def taskfile_with_dagnodes(request, djprj, mrefobjinter):
+    cmds.file(new=True, force=True)
     """Create a scene with a scenenode for djprj.assettaskfiles[0] and
     a dag transform node "testdagnode".
     """
@@ -36,9 +37,34 @@ def taskfile_with_dagnodes(request, new_scene, djprj, mrefobjinter):
 
 
 @pytest.fixture(scope="function")
-def taskfile_without_dagnodes(request, new_scene, djprj, mrefobjinter):
+def taskfile_with_dagnodes2(request, djprj, mrefobjinter):
+    cmds.file(new=True, force=True)
+    """Create a scene with a scenenode for djprj.assettaskfiles[1] and
+    a dag transform node "othertestnode".
+    """
+    cmds.createNode("transform", name="othertestnode")
+    tf = djprj.assettaskfiles[1]
+    scenenode = cmds.createNode("jb_sceneNode")
+    cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    jb = JB_File(tfi)
+    jb.create_directory()
+    f = cmds.file(rename=jb.get_fullpath())
+    cmds.file(save=True, type='mayaBinary')
+
+    def fin():
+        os.remove(f)
+
+    request.addfinalizer(fin)
+    return f
+
+
+@pytest.fixture(scope="function")
+def taskfile_without_dagnodes(request, djprj, mrefobjinter):
     """Create a scene with a scenenode for djprj.assettaskfiles[0].
     """
+    cmds.file(new=True, force=True)
     tf = djprj.assettaskfiles[0]
     scenenode = cmds.createNode("jb_sceneNode")
     cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
@@ -153,3 +179,38 @@ def test_unload(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
     assert cmds.referenceQuery(refnode, isLoaded=True) is True
     assettypinter.unload(refobj, refnode)
     assert cmds.referenceQuery(refnode, isLoaded=True) is False
+
+
+def test_replace(taskfile_with_dagnodes, taskfile_with_dagnodes2, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+    refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
+    ns = cmds.referenceQuery(refnode, namespace=True)
+    ns = cmds.namespaceInfo(ns, fullName=True)
+    assert "%s:testdagnode" % ns in cmds.ls(type="transform")
+    assert "%s:othertestnode" % ns not in cmds.ls(type="transform")
+    tf2 = djprj.assettaskfiles[1]
+    tfi2 = TaskFileInfo(task=tf2.task, version=tf2.version, releasetype=tf2.releasetype,
+                               descriptor=tf2.descriptor, typ=tf2.typ)
+    assettypinter.replace(refobj, refnode, tfi2)
+    assert "%s:othertestnode" % ns in cmds.ls(type="transform")
+    assert "%s:testdagnode" % ns not in cmds.ls(type="transform")
+
+
+def test_import_taskfile(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo(task=tf.task, version=tf.version, releasetype=tf.releasetype,
+                               descriptor=tf.descriptor, typ=tf.typ)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.reference(refobj, tfi)
+    refnode = cmds.referenceQuery(taskfile_with_dagnodes, referenceNode=True)
+    assert cmds.referenceQuery("smurf_1:testdagnode", isNodeReferenced=True) is True
+
+    assettypinter.import_reference(refobj, refnode)
+
+    assert cmds.referenceQuery("smurf_1:testdagnode", isNodeReferenced=True) is False
