@@ -103,6 +103,9 @@ def test_set_reference(ref_file_with_reftrack, mrefobjinter):
     mrefobjinter.set_reference(n, ref_file_with_reftrack)
     assert cmds.listConnections("%s.referencenode" % n, d=False) == [ref_file_with_reftrack]
 
+    mrefobjinter.set_reference(n, None)
+    assert cmds.listConnections("%s.referencenode" % n, d=False) is None
+
 
 def test_get_reference(ref_file_with_reftrack, mrefobjinter):
     n = cmds.createNode("jb_reftrack", name="jb_reftrack1")
