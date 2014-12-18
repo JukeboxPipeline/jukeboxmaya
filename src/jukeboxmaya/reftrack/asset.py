@@ -139,9 +139,8 @@ class AssetReftypeInterface(ReftypeInterface):
         """
         jbfile = JB_File(taskfileinfo)
         filepath = jbfile.get_fullpath()
-        reffile = cmds.file(filepath, loadReference=reference)
-        node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
-        ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
+        cmds.file(filepath, loadReference=reference)
+        ns = cmds.referenceQuery(reference, namespace=True)  # query the actual new namespace
         content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
         scenenode = self.get_scenenode(content) # get the scene node
         self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)

@@ -203,6 +203,11 @@ def test_replace(taskfile_with_dagnodes, taskfile_with_dagnodes2, djprj, assetty
     assert cmds.listConnections('%s.taskfile_id' % refobj) == ['%s:jb_sceneNode_test' % ns]
 
     assettypinter.replace(refobj, refnode, tfi2)
+    # this will reference the same file again. it will get a copy number
+    # the file command does not return the name with copy number. seems like a bug
+    # because the doc sais it will. You have to use the reference node for referenceQuery instead
+    # to get the namespace, not the filename that is returned by the file command.
+    assettypinter.replace(refobj, refnode, tfi)
 
 
 def test_import_taskfile(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
