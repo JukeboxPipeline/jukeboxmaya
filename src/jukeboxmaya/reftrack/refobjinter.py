@@ -8,6 +8,7 @@ import maya.cmds as cmds
 
 from jukeboxcore import djadapter
 from jukeboxcore.reftrack import RefobjInterface, Reftrack
+from jukeboxmaya import common
 from jukeboxmaya.mayaplugins import jbscene
 from jukeboxmaya.mayaplugins.jbreftrack import JB_ReftrackNode
 from jukeboxmaya.reftrack.asset import AssetReftypeInterface
@@ -156,6 +157,19 @@ class MayaRefobjInterface(RefobjInterface):
             else:
                 raise e
 
+    def delete(self, refobj):
+        """Delete the given refobj and the contents of the entity
+
+        :param refobj: the refobj to delete
+        :type refobj: refobj
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        # disconnect all connections so we do dont delete the refobj
+        common.disconnect_node(refobj)
+        super(MayaRefobjInterface, self).delete(refobj)
+
     def delete_refobj(self, refobj):
         """Delete the given reftrack node
 
@@ -165,17 +179,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        # disconnect all connections so we do only delete the refobj and nothing else
-        destconns = cmds.listConnections(refobj, connections=True, plugs=True, source=0)
-        srcconns = cmds.listConnections(refobj, connections=True, plugs=True, destination=0)
-        if destconns:
-            for i in range(0, len(destconns), 2):
-                source, dest = destconns[i], destconns[i+1]
-                cmds.disconnectAttr(source, dest)
-        if srcconns:
-            for i in range(0, len(srcconns), 2):
-                source, dest = srcconns[i+1], srcconns[i]
-                cmds.disconnectAttr(source, dest)
+        common.disconnect_node(refobj)
         # delete the node
         cmds.delete(refobj)
 

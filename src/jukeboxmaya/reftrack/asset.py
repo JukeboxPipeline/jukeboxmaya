@@ -155,6 +155,7 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
+        common.disconnect_node(refobj)
         refobjinter = self.get_refobjinter()
         reference = refobjinter.get_reference(refobj)
         if reference:

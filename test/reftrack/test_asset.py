@@ -289,3 +289,20 @@ def test_import_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mre
     content2 = cmds.namespaceInfo(ns2, listNamespace=True)
     for n in content + content2:
         assert cmds.referenceQuery(n, isNodeReferenced=True) is False
+
+
+def test_delete(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
+    cmds.file(new=True, force=True)
+    tf = djprj.assettaskfiles[0]
+    tfi = TaskFileInfo.create_from_taskfile(tf)
+    refobj = mrefobjinter.create(typ="Asset")
+    assettypinter.import_taskfile(refobj, tfi)
+
+    ns = cmds.getAttr("%s.namespace" % refobj)
+    assert cmds.objExists("%s:testdagnode" % ns)
+    assert cmds.objExists(refobj)
+
+    assettypinter.delete(refobj)
+
+    assert cmds.namespace(exists=ns) is False
+    assert cmds.objExists(refobj)
