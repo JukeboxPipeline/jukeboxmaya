@@ -41,6 +41,22 @@ class AssetReftypeInterface(ReftypeInterface):
         """
         return True
 
+    def get_scenenode(self, nodes):
+        """Get the scenenode in the given nodes
+
+        There should only be one scenenode in nodes!
+
+        :param nodes:
+        :type nodes:
+        :returns: None
+        :rtype: None
+        :raises: AssertionError
+        """
+        scenenodes = cmds.ls(nodes, type='jb_sceneNode')
+        assert scenenodes, "Found no scene nodes!"
+        assert len(scenenodes) == 1, "Found to many scene nodes! %s" % scenenodes
+        return scenenodes[0]
+
     def reference(self, refobj, taskfileinfo):
         """Reference the given taskfileinfo into the scene and return the created reference node
 
@@ -67,6 +83,9 @@ class AssetReftypeInterface(ReftypeInterface):
             node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
             ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
             content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True)  # get the content
+            # connect reftrack with scenenode
+            scenenode = self.get_scenenode(content)
+            self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
             dagcontent = cmds.ls(content, dag=True, ap=True)  # get only the dagnodes so we can group them
             if not dagcontent:
                 return node  # no need for a top group if there are not dagnodes to group
@@ -120,7 +139,12 @@ class AssetReftypeInterface(ReftypeInterface):
         """
         jbfile = JB_File(taskfileinfo)
         filepath = jbfile.get_fullpath()
-        cmds.file(filepath, loadReference=reference)
+        reffile = cmds.file(filepath, loadReference=reference)
+        node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
+        ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
+        content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
+        scenenode = self.get_scenenode(content) # get the scene node
+        self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
 
     def delete(self, refobj):
         """Delete the content of the given refobj
@@ -176,6 +200,9 @@ class AssetReftypeInterface(ReftypeInterface):
             assert nodes, 'Nothing was imported! this is unusual!'
             ns = common.get_top_namespace(nodes[0])  # get the actual namespace
             cmds.setAttr("%s.namespace" % refobj, ns, type="string")
+            nscontent = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
+            scenenode = self.get_scenenode(nscontent)
+            self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
             dagcontent = cmds.ls(nodes, dag=True, ap=True)  # get only the dagnodes so we can group them
             if not dagcontent:
                 return  # no need for a top group if there are not dagnodes to group
@@ -196,7 +223,7 @@ class AssetReftypeInterface(ReftypeInterface):
         :raises: None
         """
         tfs = []
-        for task in element.tasks:
+        for task in element.tasks.all():
             taskfiles = list(task.taskfile_set.filter(releasetype=djadapter.RELEASETYPES['release'],
                                                       typ=djadapter.FILETYPES['mayamainscene']))
             tfs.extend(taskfiles)
@@ -252,3 +279,31 @@ class AssetReftypeInterface(ReftypeInterface):
         :raises: None
         """
         return []
+
+    def get_scene_suggestions(self, current):
+        """Return a list with elements for reftracks for the current scene with this type.
+
+        For every element returned, the reftrack system will create a :class:`Reftrack` with the type
+        of this interface, if it is not already in the scene.
+
+        E.g. if you have a type that references whole scenes, you might suggest all
+        linked assets for shots, and all liked assets plus the current element itself for assets.
+        If you have a type like shader, that usually need a parent, you would return an empty list.
+        Cameras might only make sense for shots and not for assets etc.
+
+        Do not confuse this with :meth:`ReftypeInterface.get_suggestions`. It will gather suggestions
+        for children of a :class:`Reftrack`.
+
+        The standard implementation only returns an empty list!
+
+        :param reftrack: the reftrack which needs suggestions
+        :type reftrack: :class:`Reftrack`
+        :returns: list of suggestions, tuples of type and element.
+        :rtype: list
+        :raises: None
+        """
+        l = []
+        if isinstance(current, djadapter.models.Asset):
+            l.append(current)
+        l.extend(list(current.assets.all()))
+        return l

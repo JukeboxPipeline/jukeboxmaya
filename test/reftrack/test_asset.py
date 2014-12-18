@@ -43,7 +43,7 @@ def taskfile_with_dagnodes2(request, djprj, mrefobjinter):
     """
     cmds.createNode("transform", name="othertestnode")
     tf = djprj.assettaskfiles[1]
-    scenenode = cmds.createNode("jb_sceneNode")
+    scenenode = cmds.createNode("jb_sceneNode", name='jb_sceneNode_test')
     cmds.setAttr("%s.taskfile_id" % scenenode, tf.pk)
     tfi = TaskFileInfo.create_from_taskfile(tf)
     jb = JB_File(tfi)
@@ -98,6 +98,8 @@ def test_reference_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefob
     assert "%s:testdagnode" % ns in cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
     assert cmds.listRelatives("%s:testdagnode" % ns, parent=True, type="jb_asset")
 
+    assert cmds.getAttr("%s.taskfile_id" % refobj) == tf.pk
+
     # reference2
     refobj2 = mrefobjinter.create(typ="Asset")
     assettypinter.reference(refobj2, tfi)
@@ -111,6 +113,8 @@ def test_reference_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefob
     assert ns2 != ns
     assert "%s:testdagnode" % ns2 in cmds.namespaceInfo(ns2, listOnlyDependencyNodes=True)
     assert cmds.listRelatives("%s:testdagnode" % ns2, parent=True, type="jb_asset")
+
+    assert cmds.getAttr("%s.taskfile_id" % refobj2) == tf.pk
 
 
 def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mrefobjinter):
@@ -132,6 +136,7 @@ def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, 
     # assert no group created
     content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
     assert not cmds.ls(content, type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj) == tf.pk
 
     # reference2
     refobj2 = mrefobjinter.create(typ="Asset")
@@ -147,6 +152,7 @@ def test_reference_without_dag(taskfile_without_dagnodes, djprj, assettypinter, 
     # assert no group created
     content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
     assert not cmds.ls(content, type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj2) == tf.pk
 
 
 def test_load(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
@@ -191,6 +197,12 @@ def test_replace(taskfile_with_dagnodes, taskfile_with_dagnodes2, djprj, assetty
     assettypinter.replace(refobj, refnode, tfi2)
     assert "%s:othertestnode" % ns in cmds.ls(type="transform")
     assert "%s:testdagnode" % ns not in cmds.ls(type="transform")
+    assert cmds.getAttr("%s.taskfile_id" % refobj) == tf2.pk
+
+    assert '%s:jb_sceneNode_test' % ns in cmds.listConnections('%s.scenenode' % refobj)
+    assert cmds.listConnections('%s.taskfile_id' % refobj) == ['%s:jb_sceneNode_test' % ns]
+
+    assettypinter.replace(refobj, refnode, tfi2)
 
 
 def test_import_taskfile(taskfile_with_dagnodes, djprj, assettypinter, mrefobjinter):
@@ -224,6 +236,7 @@ def test_import_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefobjin
     assert ns == "smurf_1"
     assert "%s:testdagnode" % ns in cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)
     assert cmds.listRelatives("%s:testdagnode" % ns, parent=True, type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj) == tf.pk
 
     # reference2
     refobj2 = mrefobjinter.create(typ="Asset")
@@ -236,6 +249,7 @@ def test_import_with_dag(taskfile_with_dagnodes, djprj, assettypinter, mrefobjin
     assert ns2 != ns
     assert "%s:testdagnode" % ns2 in cmds.namespaceInfo(ns2, listOnlyDependencyNodes=True)
     assert cmds.listRelatives("%s:testdagnode" % ns2, parent=True, type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj2) == tf.pk
 
     assert cmds.referenceQuery("smurf_1:testdagnode", isNodeReferenced=True) is False
     assert cmds.referenceQuery("smurf_2:testdagnode", isNodeReferenced=True) is False
@@ -257,6 +271,7 @@ def test_import_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mre
     ns = cmds.getAttr("%s.namespace" % refobj)
     assert ns == "smurf_1"
     assert not cmds.ls(type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj) == tf.pk
 
     # reference2
     refobj2 = mrefobjinter.create(typ="Asset")
@@ -268,6 +283,7 @@ def test_import_without_dag(taskfile_without_dagnodes, djprj, assettypinter, mre
     assert ns2 == "smurf_2"
     assert ns2 != ns
     assert not cmds.ls(type="jb_asset")
+    assert cmds.getAttr("%s.taskfile_id" % refobj2) == tf.pk
 
     content = cmds.namespaceInfo(ns, listNamespace=True)
     content2 = cmds.namespaceInfo(ns2, listNamespace=True)

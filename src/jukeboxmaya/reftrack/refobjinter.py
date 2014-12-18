@@ -272,8 +272,11 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        cmds.connectAttr("%s.scenenode" % refobj, "%s.reftrack" % scenenode, force=True)
-        cmds.connectAttr("%s.taskfile_id" % scenenode, "%s.taskfile_id" % refobj, force=True)
+        conns = [("%s.scenenode" % refobj, "%s.reftrack" % scenenode),
+                 ("%s.taskfile_id" % scenenode, "%s.taskfile_id" % refobj)]
+        for src, dst in conns:
+            if not cmds.isConnected(src, dst):
+                cmds.connectAttr(src, dst, force=True)
 
     def fetch_action_restriction(self, reftrack, action):
         """Return wheter the given action is restricted for the given reftrack
