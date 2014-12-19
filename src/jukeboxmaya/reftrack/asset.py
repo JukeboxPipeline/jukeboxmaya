@@ -2,13 +2,13 @@
 from collections import defaultdict
 
 import maya.cmds as cmds
-from PySide import QtGui
 
 from jukeboxcore import djadapter
 from jukeboxcore.filesys import JB_File
 from jukeboxcore.reftrack import ReftypeInterface
 from jukeboxcore.filesys import TaskFileInfo
 from jukeboxcore.gui import djitemdata
+from jukeboxcore.gui.main import get_icon
 from jukeboxcore.gui.treemodel import TreeModel, TreeItem, ListItemData
 from jukeboxcore.gui.filesysitemdata import TaskFileInfoItemData
 from jukeboxmaya import common
@@ -325,11 +325,11 @@ class AssetReftypeInterface(ReftypeInterface):
         l.extend(list(current.assets.all()))
         return l
 
-    def get_typ_color(self, ):
-        """Return a color that should be used to identify the type in an UI
+    def get_typ_icon(self, ):
+        """Return a icon that should be used to identify the type in an UI
 
-        :returns: a color for this type
-        :rtype: :class:`QtGui.QColor`
-        :raises: NotImplementedError
+        :returns: a icon for this type
+        :rtype: :class:`QtGui.QIcon` | None
+        :raises: None
         """
-        return QtGui.QColor.fromHsv(210, 115, 230)
+        return get_icon("asset.png", asicon=True)
