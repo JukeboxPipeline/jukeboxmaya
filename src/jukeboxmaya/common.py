@@ -59,7 +59,7 @@ def get_top_namespace(node):
         return name.partition(":")[0]
 
 
-def disconnect_node(node):
+def disconnect_node(node, src=True, dst=True):
     """Disconnect all connections from node
 
     :param node: the node to disconnect
@@ -68,11 +68,13 @@ def disconnect_node(node):
     :rtype: None
     :raises: None
     """
-    destconns = cmds.listConnections(node, connections=True, plugs=True, source=False) or []
-    srcconns = cmds.listConnections(node, connections=True, plugs=True, destination=False) or []
-    for i in range(0, len(destconns), 2):
-        source, dest = destconns[i], destconns[i+1]
-        cmds.disconnectAttr(source, dest)
-    for i in range(0, len(srcconns), 2):
-        source, dest = srcconns[i+1], srcconns[i]
-        cmds.disconnectAttr(source, dest)
+    if dst:
+        destconns = cmds.listConnections(node, connections=True, plugs=True, source=False) or []
+        for i in range(0, len(destconns), 2):
+            source, dest = destconns[i], destconns[i+1]
+            cmds.disconnectAttr(source, dest)
+    if src:
+        srcconns = cmds.listConnections(node, connections=True, plugs=True, destination=False) or []
+        for i in range(0, len(srcconns), 2):
+            source, dest = srcconns[i+1], srcconns[i]
+            cmds.disconnectAttr(source, dest)

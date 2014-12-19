@@ -167,7 +167,7 @@ class MayaRefobjInterface(RefobjInterface):
         :raises: None
         """
         # disconnect all connections so we do dont delete the refobj
-        common.disconnect_node(refobj)
+        common.disconnect_node(refobj, src=False)
         super(MayaRefobjInterface, self).delete(refobj)
 
     def delete_refobj(self, refobj):
@@ -179,7 +179,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        common.disconnect_node(refobj)
+        common.disconnect_node(refobj, src=False)
         # delete the node
         cmds.delete(refobj)
 
@@ -295,11 +295,11 @@ class MayaRefobjInterface(RefobjInterface):
 
         available actions are:
 
-           ``reference``, ``load``, ``unload``, ``replace``, ``import_reference``, ``import_taskfile``
+           ``reference``, ``load``, ``unload``, ``replace``, ``import_reference``, ``import_taskfile``, ``delete``
 
         If action is not available, True is returned.
 
-        Replace is always restricted for nested references!
+        Replace and Delete is always restricted for nested references!
 
         :param reftrack: the reftrack to query
         :type reftrack: :class:`Reftrack`
@@ -309,7 +309,7 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: :class:`bool`
         :raises: None
         """
-        if action == 'replace' and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
+        if action in ('replace', 'delete') and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
             tracknode = reftrack.get_refobj()
             restricted = cmds.referenceQuery(tracknode, isNodeReferenced=True)
             if restricted:

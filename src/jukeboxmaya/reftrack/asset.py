@@ -155,14 +155,16 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
-        common.disconnect_node(refobj)
+        common.disconnect_node(refobj, src=False)
         refobjinter = self.get_refobjinter()
         reference = refobjinter.get_reference(refobj)
         if reference:
-            cmds.file(reference, removeReference=True, force=True)
+            reffile = cmds.referenceQuery(reference, filename=True)
+            cmds.file(reffile, removeReference=True, force=True)
         else:
             ns = cmds.getAttr("%s.namespace" % refobj)
             content = cmds.namespaceInfo(ns, listNamespace=True)
+            print content
             cmds.delete(content)
             cmds.namespace(removeNamespace=ns)
 
