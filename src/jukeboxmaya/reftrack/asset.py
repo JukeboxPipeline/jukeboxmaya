@@ -256,6 +256,22 @@ class AssetReftypeInterface(ReftypeInterface):
                 TreeItem(tfidata, taskitem)
         return TreeModel(rootitem)
 
+    def get_option_labels(self, element):
+        """Return labels for each level of the option model.
+
+        The options returned by :meth:`RefobjInterface.fetch_options` is a treemodel
+        with ``n`` levels. Each level should get a label to describe what is displays.
+
+        Assets are organized in tasks and versions.
+
+        :param element: The element for which the options should be fetched.
+        :type element: :class:`jukeboxcore.djadapter.models.Asset` | :class:`jukeboxcore.djadapter.models.Shot`
+        :returns: label strings for all levels
+        :rtype: list
+        :raises: None
+        """
+        return ["Task", "Version"]
+
     def get_suggestions(self, reftrack):
         """Return a list with possible children for this reftrack
 
