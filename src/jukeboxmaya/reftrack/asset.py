@@ -2,6 +2,7 @@
 from collections import defaultdict
 
 import maya.cmds as cmds
+from PySide import QtGui
 
 from jukeboxcore import djadapter
 from jukeboxcore.filesys import JB_File
@@ -323,3 +324,12 @@ class AssetReftypeInterface(ReftypeInterface):
             l.append(current)
         l.extend(list(current.assets.all()))
         return l
+
+    def get_typ_color(self, ):
+        """Return a color that should be used to identify the type in an UI
+
+        :returns: a color for this type
+        :rtype: :class:`QtGui.QColor`
+        :raises: NotImplementedError
+        """
+        return QtGui.QColor.fromHsv(210, 115, 230)
