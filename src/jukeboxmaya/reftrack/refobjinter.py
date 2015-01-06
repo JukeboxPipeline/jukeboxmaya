@@ -308,9 +308,9 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: :class:`bool`
         :raises: None
         """
-        if action in ('replace', 'delete') and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
-            tracknode = reftrack.get_refobj()
-            restricted = cmds.referenceQuery(tracknode, isNodeReferenced=True)
-            if restricted:
-                return True
+        if action in ('replace', 'delete', 'import_reference') and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
+                tracknode = reftrack.get_refobj()
+                restricted = cmds.referenceQuery(tracknode, isNodeReferenced=True)
+                if restricted:
+                    return True
         return super(MayaRefobjInterface, self).fetch_action_restriction(reftrack, action)
