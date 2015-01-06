@@ -201,7 +201,7 @@ class AssetReftypeInterface(ReftypeInterface):
             jbfile = JB_File(taskfileinfo)
             filepath = jbfile.get_fullpath()
             ns_suggestion = reftrack.get_namespace(taskfileinfo)
-            nodes = cmds.file(filepath, i=True, namespace=ns_suggestion, returnNewNodes=True)  # import
+            nodes = cmds.file(filepath, i=True, namespace=ns_suggestion, returnNewNodes=True, preserveReferences=True)  # import
             assert nodes, 'Nothing was imported! this is unusual!'
             ns = common.get_top_namespace(nodes[0])  # get the actual namespace
             cmds.setAttr("%s.namespace" % refobj, ns, type="string")
