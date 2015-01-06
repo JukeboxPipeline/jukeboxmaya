@@ -87,7 +87,8 @@ class AssetReftypeInterface(ReftypeInterface):
             # connect reftrack with scenenode
             scenenode = self.get_scenenode(content)
             self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
-            dagcontent = cmds.ls(content, dag=True, ap=True)  # get only the dagnodes so we can group them
+            reccontent = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)  # get the content + content of children
+            dagcontent = cmds.ls(reccontent, ap=True, assemblies=True)  # get only the top level dagnodes so we can group them
             if not dagcontent:
                 return node  # no need for a top group if there are not dagnodes to group
             # group the dagnodes
@@ -155,18 +156,19 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
-        common.disconnect_node(refobj, src=False)
         refobjinter = self.get_refobjinter()
         reference = refobjinter.get_reference(refobj)
         if reference:
             reffile = cmds.referenceQuery(reference, filename=True)
-            cmds.file(reffile, removeReference=True, force=True)
+            fullns = cmds.referenceQuery(reference, namespace=True)
+            cmds.file(reffile, removeReference=True)
         else:
+            parentns = common.get_top_namespace(refobj)
             ns = cmds.getAttr("%s.namespace" % refobj)
-            content = cmds.namespaceInfo(ns, listNamespace=True)
-            print content
-            cmds.delete(content)
-            cmds.namespace(removeNamespace=ns)
+            fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
+        content = cmds.namespaceInfo(fullns, listNamespace=True)
+        cmds.delete(content)
+        cmds.namespace(removeNamespace=fullns)
 
     def import_reference(self, refobj, reference):
         """Import the given reference
@@ -206,7 +208,7 @@ class AssetReftypeInterface(ReftypeInterface):
             nscontent = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
             scenenode = self.get_scenenode(nscontent)
             self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
-            dagcontent = cmds.ls(nodes, dag=True, ap=True)  # get only the dagnodes so we can group them
+            dagcontent = cmds.ls(nodes, ap=True, assemblies=True)  # get only the dagnodes so we can group them
             if not dagcontent:
                 return  # no need for a top group if there are not dagnodes to group
             # group the dagnodes in the new namespace
@@ -274,6 +276,20 @@ class AssetReftypeInterface(ReftypeInterface):
         :raises: None
         """
         return ["Task", "Version"]
+
+    def get_option_columns(self, element):
+        """Return the column of the model to show for each level
+
+        Because each level might be displayed in a combobox. So you might want to provide the column
+        to show.
+
+        :param element: The element for wich the options should be fetched.
+        :type element: :class:`jukeboxcore.djadapter.models.Asset` | :class:`jukeboxcore.djadapter.models.Shot`
+        :returns: a list of columns
+        :rtype: list
+        :raises: None
+        """
+        return [0, 3]
 
     def get_suggestions(self, reftrack):
         """Return a list with possible children for this reftrack
