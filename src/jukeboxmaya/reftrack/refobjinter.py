@@ -135,7 +135,9 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: str
         :raises: None
         """
-        return cmds.createNode("jb_reftrack")
+        n = cmds.createNode("jb_reftrack")
+        cmds.lockNode(n, lock=True)
+        return n
 
     def referenced_by(self, refobj):
         """Return the reference that holds the given reftrack node.
@@ -166,8 +168,6 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        # disconnect all connections so we do dont delete the refobj
-        common.disconnect_node(refobj, src=False)
         super(MayaRefobjInterface, self).delete(refobj)
 
     def delete_refobj(self, refobj):
@@ -179,9 +179,8 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: None
         :raises: None
         """
-        common.disconnect_node(refobj, src=False)
-        # delete the node
-        cmds.delete(refobj)
+        with common.locknode(refobj, lock=False):
+            cmds.delete(refobj)
 
     def get_all_refobjs(self, ):
         """Return all refobjs in the scene
