@@ -81,6 +81,7 @@ class AssetReftypeInterface(ReftypeInterface):
             filepath = jbfile.get_fullpath()
             ns_suggestion = reftrack.get_namespace(taskfileinfo)
             reffile = cmds.file(filepath, reference=True, namespace=ns_suggestion)
+            # TODO will fail if import file, delete and reference again
             node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
             ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
             content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True)  # get the content
@@ -143,7 +144,7 @@ class AssetReftypeInterface(ReftypeInterface):
         filepath = jbfile.get_fullpath()
         cmds.file(filepath, loadReference=reference)
         ns = cmds.referenceQuery(reference, namespace=True)  # query the actual new namespace
-        content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
+        content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True)  # get the content
         scenenode = self.get_scenenode(content) # get the scene node
         self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
 
@@ -166,7 +167,7 @@ class AssetReftypeInterface(ReftypeInterface):
             parentns = common.get_top_namespace(refobj)
             ns = cmds.getAttr("%s.namespace" % refobj)
             fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
-        content = cmds.namespaceInfo(fullns, listNamespace=True)
+        content = cmds.namespaceInfo(fullns, listNamespace=True, dagPath=True)
         cmds.delete(content)
         cmds.namespace(removeNamespace=fullns)
 
@@ -205,7 +206,7 @@ class AssetReftypeInterface(ReftypeInterface):
             assert nodes, 'Nothing was imported! this is unusual!'
             ns = common.get_top_namespace(nodes[0])  # get the actual namespace
             cmds.setAttr("%s.namespace" % refobj, ns, type="string")
-            nscontent = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True)  # get the content
+            nscontent = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True)  # get the content
             scenenode = self.get_scenenode(nscontent)
             self.get_refobjinter().connect_reftrack_scenenode(refobj, scenenode)
             dagcontent = cmds.ls(nodes, ap=True, assemblies=True)  # get only the dagnodes so we can group them
