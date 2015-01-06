@@ -38,6 +38,33 @@ def preserve_selection():
         cmds.select(sl, replace=True)
 
 
+@contextmanager
+def locknode(node, lock=True):
+    """Contextmanager that will lock or unlock the given node and afterwards, restore the original status
+
+    :param node: the node to lock/unlock or nodes
+    :type node: str | list | tuple
+    :param lock: True for locking, False for unlocking
+    :type lock: bool
+    :returns: None
+    :rtype: None
+    :raises: None
+    """
+
+    oldstatus = cmds.lockNode(node, q=1)
+    cmds.lockNode(node, lock=lock)
+    try:
+        yield
+    finally:
+        if isinstance(node, basestring):
+            if cmds.objExists(node):
+                cmds.lockNode(node, lock=oldstatus[0])
+        else:
+            for n, l in zip(node, oldstatus):
+                if cmds.objExists(n):
+                    cmds.lockNode(n, lock=l)
+
+
 def get_top_namespace(node):
     """Return the top namespace of the given node
 
