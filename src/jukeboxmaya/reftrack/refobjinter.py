@@ -272,6 +272,21 @@ class MayaRefobjInterface(RefobjInterface):
         except djadapter.models.TaskFile.DoesNotExist:
             raise djadapter.models.TaskFile.DoesNotExist("Could not find the taskfile that was set on the node %s. Id was %s" % (refobj, tfid))
 
+    def select_content(self, refobj):
+        """Select the content of the given refobj
+
+        :param refobj: the refobject to query
+        :type refobj: refobj
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        parentns = common.get_top_namespace(refobj)
+        ns = cmds.getAttr("%s.namespace" % refobj)
+        fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
+        c = cmds.namespaceInfo(fullns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)
+        cmds.select(c, replace=True)
+
     def connect_reftrack_scenenode(self, refobj, scenenode):
         """Connect the given reftrack node with the given scene node
 
@@ -308,6 +323,8 @@ class MayaRefobjInterface(RefobjInterface):
         :rtype: :class:`bool`
         :raises: None
         """
+        if action == 'import_reference' and reftrack.status() == Reftrack.UNLOADED:
+            return True
         if action in ('replace', 'delete', 'import_reference') and reftrack.status() in (Reftrack.LOADED, Reftrack.UNLOADED):
                 tracknode = reftrack.get_refobj()
                 restricted = cmds.referenceQuery(tracknode, isNodeReferenced=True)

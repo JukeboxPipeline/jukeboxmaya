@@ -171,9 +171,7 @@ class AssetReftypeInterface(ReftypeInterface):
             parentns = common.get_top_namespace(refobj)
             ns = cmds.getAttr("%s.namespace" % refobj)
             fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
-        content = cmds.namespaceInfo(fullns, listNamespace=True, dagPath=True)
-        cmds.delete(content)
-        cmds.namespace(removeNamespace=fullns)
+        cmds.namespace(removeNamespace=fullns, deleteNamespaceContent=True)
 
     def import_reference(self, refobj, reference):
         """Import the given reference
@@ -187,8 +185,7 @@ class AssetReftypeInterface(ReftypeInterface):
         :rtype: None
         :raises: None
         """
-        f = cmds.referenceQuery(reference, filename=True)
-        cmds.file(f, importReference=True)
+        cmds.file(importReference=True, referenceNode=reference)
 
     def import_taskfile(self, refobj, taskfileinfo):
         """Import the given taskfileinfo and update the refobj
