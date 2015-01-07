@@ -80,9 +80,14 @@ class AssetReftypeInterface(ReftypeInterface):
             jbfile = JB_File(taskfileinfo)
             filepath = jbfile.get_fullpath()
             ns_suggestion = reftrack.get_namespace(taskfileinfo)
-            reffile = cmds.file(filepath, reference=True, namespace=ns_suggestion)
-            # TODO will fail if import file, delete and reference again
-            node = cmds.referenceQuery(reffile, referenceNode=True)  # get reference node
+            newnodes = cmds.file(filepath, reference=True, namespace=ns_suggestion, returnNewNodes=True)
+            # You could also use the filename returned by the file command to query the reference node.
+            # Atm there is a but, that if you import the file before, the command fails.
+            # So we get all new reference nodes and query the one that is not referenced
+            for refnode in cmds.ls(newnodes, type='reference'):
+                if not cmds.referenceQuery(refnode, isNodeReferenced=True):
+                    node = refnode
+                    break
             ns = cmds.referenceQuery(node, namespace=True)  # query the actual new namespace
             content = cmds.namespaceInfo(ns, listOnlyDependencyNodes=True, dagPath=True)  # get the content
             # connect reftrack with scenenode
@@ -160,9 +165,8 @@ class AssetReftypeInterface(ReftypeInterface):
         refobjinter = self.get_refobjinter()
         reference = refobjinter.get_reference(refobj)
         if reference:
-            reffile = cmds.referenceQuery(reference, filename=True)
             fullns = cmds.referenceQuery(reference, namespace=True)
-            cmds.file(reffile, removeReference=True)
+            cmds.file(removeReference=True, referenceNode=reference)
         else:
             parentns = common.get_top_namespace(refobj)
             ns = cmds.getAttr("%s.namespace" % refobj)
