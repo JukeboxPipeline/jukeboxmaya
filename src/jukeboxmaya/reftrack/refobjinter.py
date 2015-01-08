@@ -128,6 +128,30 @@ class MayaRefobjInterface(RefobjInterface):
             raise ValueError("The given type %s could not be found in available types: %" % (typ, JB_ReftrackNode.types))
         cmds.setAttr("%s.type" % refobj, enum)
 
+    def get_id(self, refobj):
+        """Return the identifier of the given refobject
+
+        :param refobj: the refobj to query
+        :type refobj: refobj
+        :returns: the refobj id. Used to identify refobjects of the same parent, element and type in the UI
+        :rtype: int
+        :raises: None
+        """
+        return cmds.getAttr("%s.identifier" % refobj)
+
+    def set_id(self, refobj, identifier):
+        """Set the identifier on the given refobj
+
+        :param refobj: the refobj to edit
+        :type refobj: refobj
+        :param identifier: the refobj id. Used to identify refobjects of the same parent, element and type in the UI
+        :type identifier: int
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        cmds.setAttr("%s.identifier" %refobj, identifier)
+
     def create_refobj(self, ):
         """Create and return a new reftrack node
 
