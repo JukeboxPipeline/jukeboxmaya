@@ -67,6 +67,10 @@ class JB_ReftrackNode(OpenMayaMPx.MPxNode):
         cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
         cls.addAttribute(cls.taskfile_id)
 
+        # the identifier attribute, we need to order the reftracks in the id permanently
+        cls.identifier_attr = nAttr.create('identifier', 'id', OpenMaya.MFnNumericData.kInt, -1)
+        cls.addAttribute(cls.identifier_attr)
+
     @classmethod
     def creator(cls):
         return OpenMayaMPx.asMPxPtr(cls())
