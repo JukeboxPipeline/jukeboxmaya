@@ -1,11 +1,12 @@
 """Implementation of :class:`jukeboxcore.reftrack.ReftypeInterface` for Assets."""
 from collections import defaultdict
+from functools import partial
 
 import maya.cmds as cmds
 
 from jukeboxcore import djadapter
 from jukeboxcore.filesys import JB_File
-from jukeboxcore.reftrack import ReftypeInterface
+from jukeboxcore.reftrack import ReftypeInterface, ReftrackAction
 from jukeboxcore.filesys import TaskFileInfo
 from jukeboxcore.gui import djitemdata
 from jukeboxcore.gui.main import get_icon
@@ -13,6 +14,45 @@ from jukeboxcore.gui.treemodel import TreeModel, TreeItem, ListItemData
 from jukeboxcore.gui.filesysitemdata import TaskFileInfoItemData
 from jukeboxmaya import common
 from jukeboxmaya import reftrack
+
+
+def select_dp_nodes(reftrack):
+    """Select all dag nodes of the given reftrack
+
+    :param reftrack: The reftrack to select the dagnodes for
+    :type reftrack: :class:`jukeboxcore.reftrack.Reftrack`
+    :returns: None
+    :rtype: None
+    :raises: None
+    """
+    refobj = reftrack.get_refobj()
+    if not refobj:
+        return
+    parentns = common.get_top_namespace(refobj)
+    ns = cmds.getAttr("%s.namespace" % refobj)
+    fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
+    c = cmds.namespaceInfo(fullns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)
+    cmds.select(c, replace=True)
+
+
+def select_dag_nodes(reftrack):
+    """Select all dag nodes of the given reftrack
+
+    :param reftrack: The reftrack to select the dagnodes for
+    :type reftrack: :class:`jukeboxcore.reftrack.Reftrack`
+    :returns: None
+    :rtype: None
+    :raises: None
+    """
+    refobj = reftrack.get_refobj()
+    if not refobj:
+        return
+    parentns = common.get_top_namespace(refobj)
+    ns = cmds.getAttr("%s.namespace" % refobj)
+    fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
+    c = cmds.namespaceInfo(fullns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)
+    dag = cmds.ls(c, dag=True, ap=True)
+    cmds.select(dag, replace=True)
 
 
 class AssetReftypeInterface(ReftypeInterface):
@@ -353,3 +393,20 @@ class AssetReftypeInterface(ReftypeInterface):
         :raises: None
         """
         return get_icon("asset.png", asicon=True)
+
+    def get_additional_actions(self, reftrack):
+        """Return a list of additional actions you want to provide for the menu
+        of the reftrack.
+
+        E.e. you want to have a menu entry, that will select the entity in your programm.
+
+        :param reftrack: the reftrack to return the actions for
+        :type reftrack: :class:`Reftrack`
+        :returns: A list of :class:`ReftrackAction`
+        :rtype: list
+        :raises: None
+        """
+        refobj = reftrack.get_refobj()
+        select_dp_action = ReftrackAction("Select Nodes", partial(select_dp_nodes, reftrack=reftrack), enabled=bool(refobj))
+        select_dag_action = ReftrackAction("Select DAG", partial(select_dag_nodes, reftrack=reftrack), enabled=bool(refobj))
+        return [select_dp_action, select_dag_action]
