@@ -86,6 +86,22 @@ def get_top_namespace(node):
         return name.partition(":")[0]
 
 
+def get_namespace(node):
+    """Return the namespace of the given node
+
+    If the node has not namespace (only root), ":" is returned.
+    Else the namespace is returned
+
+    :param node: the node to query
+    :type node: str
+    :returns: The top level namespace.
+    :rtype: str
+    :raises: None
+    """
+    ns = node.rpartition('|')[2].rpartition(':')[0]
+    return ns or ':'
+
+
 def disconnect_node(node, src=True, dst=True):
     """Disconnect all connections from node
 

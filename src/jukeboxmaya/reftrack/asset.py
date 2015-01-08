@@ -28,7 +28,7 @@ def select_dp_nodes(reftrack):
     refobj = reftrack.get_refobj()
     if not refobj:
         return
-    parentns = common.get_top_namespace(refobj)
+    parentns = common.get_namespace(refobj)
     ns = cmds.getAttr("%s.namespace" % refobj)
     fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
     c = cmds.namespaceInfo(fullns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)
@@ -47,7 +47,7 @@ def select_dag_nodes(reftrack):
     refobj = reftrack.get_refobj()
     if not refobj:
         return
-    parentns = common.get_top_namespace(refobj)
+    parentns = common.get_namespace(refobj)
     ns = cmds.getAttr("%s.namespace" % refobj)
     fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
     c = cmds.namespaceInfo(fullns, listOnlyDependencyNodes=True, dagPath=True, recurse=True)
@@ -208,7 +208,7 @@ class AssetReftypeInterface(ReftypeInterface):
             fullns = cmds.referenceQuery(reference, namespace=True)
             cmds.file(removeReference=True, referenceNode=reference)
         else:
-            parentns = common.get_top_namespace(refobj)
+            parentns = common.get_namespace(refobj)
             ns = cmds.getAttr("%s.namespace" % refobj)
             fullns = ":".join((parentns.rstrip(":"), ns.lstrip(":")))
         cmds.namespace(removeNamespace=fullns, deleteNamespaceContent=True)
