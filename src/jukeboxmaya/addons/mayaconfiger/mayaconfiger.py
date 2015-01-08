@@ -1,5 +1,6 @@
 from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
 from jukeboxmaya.menu import MenuManager
+from jukeboxmaya.gui.main import maya_main_window
 
 
 class MayaConfiger(JB_MayaPlugin):
@@ -67,4 +68,5 @@ class MayaConfiger(JB_MayaPlugin):
         """
         pm = MayaPluginManager.get()
         configer =  pm.get_plugin("Configer")
-        configer.run()
+        mayawin = maya_main_window()
+        configer.run(parent=mayawin)

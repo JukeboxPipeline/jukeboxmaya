@@ -8,6 +8,7 @@ from jukeboxcore.gui.widgets.releasewin import ReleaseWin
 from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
 from jukeboxmaya.mayapylauncher import mayapy_launcher
 from jukeboxmaya.commands import open_scene, save_scene, import_all_references, update_scenenode
+from jukeboxmaya.gui.main import maya_main_window
 
 
 class OptionWidget(QtGui.QWidget):
@@ -182,6 +183,7 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         :raises: None
         """
         ra = SceneReleaseActions()
-        self.rw = ReleaseWin(FILETYPES["mayamainscene"])
+        mayawin = maya_main_window()
+        self.rw = ReleaseWin(FILETYPES["mayamainscene"], parent=mayawin)
         self.rw.set_release_actions(ra)
         self.rw.show()
