@@ -39,8 +39,8 @@ with open(initfile) as fp:
     exec(fp.read(), about)
 
 long_description = read('README.rst', 'HISTORY.rst')
-install_requires = ['jukebox-core']
-tests_require = ['pytest', 'mock']
+install_requires = ['jukebox-core>=3.0.0']
+tests_require = ['pytest', 'pytest-cov', 'mock', 'sphinx']
 
 
 setup(

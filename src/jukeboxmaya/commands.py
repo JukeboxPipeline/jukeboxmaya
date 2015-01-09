@@ -4,6 +4,8 @@ These functions are inteded to be used in :class:`jukeboxcore.actions.ActionUnit
 import maya.cmds as cmds
 
 from jukeboxcore.action import ActionStatus
+from jukeboxcore import djadapter as dj
+from jukeboxmaya.mayaplugins.jbscene import get_current_scene_node
 
 
 def open_scene(f, kwargs=None):
@@ -94,3 +96,32 @@ def import_all_references(arg, kwargs=None):
         imported.append(cmds.file(rFile, **kwargs))
     msg = "Successfully imported reference %s with arguments: %s" % (imported, kwargs)
     return ActionStatus(ActionStatus.SUCCESS, msg, returnvalue=imported)
+
+
+def update_scenenode(f):
+    """Set the id of the current scene node to the id for the given file
+
+    :param f: the file to save the current scene to
+    :type f: :class:`jukeboxcore.filesys.JB_File`
+    :returns: None
+    :rtype: None
+    :raises: None
+    """
+    n = get_current_scene_node()
+    if not n:
+        msg = "Could not find a scene node."
+        return ActionStatus(ActionStatus.FAILURE, msg)
+    # get dbentry for for the given jbfile
+    tfi = f.get_obj()
+    assert tfi
+    tf = dj.taskfiles.get(task=tfi.task,
+                          releasetype=tfi.releasetype,
+                          version=tfi.version,
+                          descriptor=tfi.descriptor,
+                          typ=tfi.typ)
+
+    cmds.setAttr('%s.taskfile_id' % n, lock=False)
+    cmds.setAttr('%s.taskfile_id' % n, tf.pk)
+    cmds.setAttr('%s.taskfile_id' % n, lock=True)
+    msg = "Successfully updated scene node to %s" % tf.id
+    return ActionStatus(ActionStatus.SUCCESS, msg)

@@ -14,25 +14,30 @@ class JB_SceneNode(OpenMayaMPx.MPxNode):
     kPluginNodeId = OpenMaya.MTypeId(0x14B01)
 
     def __init__(self):
-        OpenMayaMPx.MPxNode.__init__(self)
+        super(JB_SceneNode, self).__init__()
 
+    @classmethod
+    def initialize(cls):
+        nAttr = OpenMaya.MFnNumericAttribute()
+        msgAttr = OpenMaya.MFnMessageAttribute()
 
-def creator():
-    return OpenMayaMPx.asMPxPtr(JB_SceneNode())
+        cls.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
+        cls.addAttribute(cls.taskfile_id)
 
+        # reftrack link
+        cls.reftrack_attr = msgAttr.create("reftrack", "rt")
+        msgAttr.setReadable(False)
+        cls.addAttribute(cls.reftrack_attr)
 
-def initialize():
-    #tAttr = OpenMaya.MFnTypedAttribute()
-    nAttr = OpenMaya.MFnNumericAttribute()
-
-    JB_SceneNode.taskfile_id = nAttr.create('taskfile_id', 'tfid', OpenMaya.MFnNumericData.kInt)
-    JB_SceneNode.addAttribute(JB_SceneNode.taskfile_id)
+    @classmethod
+    def creator(cls):
+        return OpenMayaMPx.asMPxPtr(cls())
 
 
 def initializePlugin(obj):
     plugin = OpenMayaMPx.MFnPlugin(obj, 'David Zuber', '1.0', 'Any')
     try:
-        plugin.registerNode(JB_SceneNode.kNodeName, JB_SceneNode.kPluginNodeId, creator, initialize)
+        plugin.registerNode(JB_SceneNode.kNodeName, JB_SceneNode.kPluginNodeId, JB_SceneNode.creator, JB_SceneNode.initialize)
     except:
         raise PluginInitError('Failed to register %s node' % JB_SceneNode.kNodeName)
 
@@ -52,12 +57,10 @@ def get_current_scene_node():
     :rtype: str | None
     :raises: None
     """
-    rootns = ':'
-    nscontent = cmds.namespaceInfo(rootns, listNamespace=True, listOnlyDependencyNodes=True)
-    l = cmds.ls(nscontent, type='jb_sceneNode')
+    l = cmds.ls(type='jb_sceneNode')
     if not l:
         return
     else:
         for n in l:
-            if not cmds.referenceQuery(n, isNodeReferenced=True):
+            if not cmds.listConnections("%s.reftrack" % n, d=False):
                 return n

@@ -13,7 +13,7 @@ from jukeboxcore import djadapter
 from jukeboxmaya.menu import MenuManager
 from jukeboxmaya.mayaplugins import jbscene
 from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
-
+from jukeboxmaya.gui.main import maya_main_window
 
 class MayaGenesis(JB_MayaPlugin):
     """A maya plugin for saving and opening shots and assets.
@@ -83,7 +83,8 @@ class MayaGenesis(JB_MayaPlugin):
         """
         if self.gw and shiboken.isValid(self.gw):
             self.gw.deleteLater()
-        self.gw = self.GenesisWin()
+        mayawin = maya_main_window()
+        self.gw = self.GenesisWin(parent=mayawin)
         self.gw.show()
 
     def subclass_genesis(self, genesisclass):
