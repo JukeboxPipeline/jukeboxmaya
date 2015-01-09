@@ -385,6 +385,21 @@ class AssetReftypeInterface(ReftypeInterface):
         l.extend(list(current.assets.all()))
         return l
 
+    def is_available_for_scene(self, element):
+        """Return True, if it should be possible to add a new reftrack with the given
+        element and the type of the interface to the scene.
+
+        Some types might only make sense for a shot or asset. Others should never be available, because
+        you would only use them as children of other reftracks (e.g. a shader).
+
+        :param element: the element that could be used in conjuction with the returned types to create new reftracks.
+        :type element: :class:`jukeboxcore.djadapter.models.Asset` | :class:`jukeboxcore.djadapter.models.Shot`
+        :returns: True, if available
+        :rtype: :class:`bool`
+        :raises: None
+        """
+        return True
+
     def get_typ_icon(self, ):
         """Return a icon that should be used to identify the type in an UI
 
