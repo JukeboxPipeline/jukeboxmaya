@@ -33,6 +33,8 @@ def reftrack_nodes(new_scene):
     n.append(cmds.createNode("jb_reftrack", name="jb_reftrack3"))
     cmds.setAttr("%s.type" % n[1], 1)
     cmds.setAttr("%s.type" % n[2], 2)
+    for node in n:
+        cmds.lockNode(node, lock=True)
     return n
 
 
