@@ -74,27 +74,27 @@ def import_all_references(arg, kwargs=None):
     :param kwargs: keyword arguments for the command maya.cmds file.
                    defaultflags that are always used:
 
-                     :importReferences: ``True``
+                     :importReference: ``True``
 
     :type kwargs: dict|None
     :returns: An action status. The returnvalue of the actionstatus are the imported references.
     :rtype: :class:`ActionStatus`
     :raises: None
     """
-    defaultkwargs = {'importReferences':True}
+    defaultkwargs = {'importReference':True}
     if kwargs is None:
         kwargs = {}
     kwargs.update(defaultkwargs)
-    # list all reference files
-    refs = cmds.ls(type='reference')
     imported = []
-    # for each reference node, query the filename and import it.
-    # Note: the filename may contain copy numbers, e.g. {1} if a file is referenced
-    # multiple times.
-    for i in refs:
-        rFile = cmds.referenceQuery(i, f=True)
-        imported.append(cmds.file(rFile, **kwargs))
-    msg = "Successfully imported reference %s with arguments: %s" % (imported, kwargs)
+
+    # list all reference files
+    refs = cmds.file(query=True, reference=True)
+    while refs:
+        for rfile in refs:
+            cmds.file(rfile, **kwargs)
+            imported.append(rfile)
+        refs = cmds.file(query=True, reference=True)
+    msg = "Successfully imported references %s with arguments: %s" % (imported, kwargs)
     return ActionStatus(ActionStatus.SUCCESS, msg, returnvalue=imported)
 
 
