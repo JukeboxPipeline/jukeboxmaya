@@ -91,7 +91,7 @@ class MayaGenesis(JB_MayaPlugin):
         if not self.gw.get_current_file():
             c = self.get_config()
             try:
-                f = models.TaskFile.objects.get(c.lastfile)
+                f = models.TaskFile.objects.get(pk=c.lastfile)
             except models.TaskFile.DoesNotExist:
                 pass
             else:
