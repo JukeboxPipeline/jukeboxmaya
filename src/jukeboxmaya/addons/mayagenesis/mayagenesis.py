@@ -87,7 +87,7 @@ class MayaGenesis(JB_MayaPlugin):
             self.gw.deleteLater()
         mayawin = maya_main_window()
         self.gw = self.GenesisWin(parent=mayawin)
-        self.gw.browser.lastfile.connect(self.save_lastfile)
+        self.gw.last_file.connect(self.save_lastfile)
         if not self.gw.get_current_file():
             c = self.get_config()
             try:
