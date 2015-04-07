@@ -87,7 +87,8 @@ class MayaGenesis(JB_MayaPlugin):
             self.gw.deleteLater()
         mayawin = maya_main_window()
         self.gw = self.GenesisWin(parent=mayawin)
-        if not self.GenesisWin.get_current_file():
+
+        if not self.gw.get_current_file():
             c = self.get_config()
             try:
                 f = models.TaskFile.objects.get(c.lastfile)
