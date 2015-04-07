@@ -87,7 +87,7 @@ class MayaGenesis(JB_MayaPlugin):
             self.gw.deleteLater()
         mayawin = maya_main_window()
         self.gw = self.GenesisWin(parent=mayawin)
-
+        self.gw.browser.lastfile.connect(self.save_lastfile)
         if not self.gw.get_current_file():
             c = self.get_config()
             try:
@@ -97,6 +97,21 @@ class MayaGenesis(JB_MayaPlugin):
             else:
                 self.gw.browser.set_selection(f)
         self.gw.show()
+
+    def save_lastfile(self, tfi):
+        """Save the taskfile in the config
+
+        :param tfi: the last selected taskfileinfo
+        :type tfi: class:`jukeboxcore.filesys.TaskFileInfo`
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        tf = models.TaskFile.objects.get(task=tfi.task, version=tfi.version, releasetype=tfi.releasetype,
+                                         descriptor=tfi.descriptor, typ=tfi.typ)
+        c = self.get_config()
+        c['lastfile'] = tf.pk
+        c.write()
 
     def subclass_genesis(self, genesisclass):
         """Subclass the given genesis class and implement all abstract methods
