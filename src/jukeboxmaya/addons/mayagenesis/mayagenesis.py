@@ -9,11 +9,13 @@ except ImportError:
 from jukeboxcore.log import get_logger
 log = get_logger(__name__)
 
+from jukedj import models
 from jukeboxcore import djadapter
 from jukeboxmaya.menu import MenuManager
 from jukeboxmaya.mayaplugins import jbscene
 from jukeboxmaya.plugins import JB_MayaPlugin, MayaPluginManager
 from jukeboxmaya.gui.main import maya_main_window
+
 
 class MayaGenesis(JB_MayaPlugin):
     """A maya plugin for saving and opening shots and assets.
@@ -85,7 +87,31 @@ class MayaGenesis(JB_MayaPlugin):
             self.gw.deleteLater()
         mayawin = maya_main_window()
         self.gw = self.GenesisWin(parent=mayawin)
+        self.gw.last_file.connect(self.save_lastfile)
+        if not self.gw.get_current_file():
+            c = self.get_config()
+            try:
+                f = models.TaskFile.objects.get(pk=c['lastfile'])
+            except models.TaskFile.DoesNotExist:
+                pass
+            else:
+                self.gw.browser.set_selection(f)
         self.gw.show()
+
+    def save_lastfile(self, tfi):
+        """Save the taskfile in the config
+
+        :param tfi: the last selected taskfileinfo
+        :type tfi: class:`jukeboxcore.filesys.TaskFileInfo`
+        :returns: None
+        :rtype: None
+        :raises: None
+        """
+        tf = models.TaskFile.objects.get(task=tfi.task, version=tfi.version, releasetype=tfi.releasetype,
+                                         descriptor=tfi.descriptor, typ=tfi.typ)
+        c = self.get_config()
+        c['lastfile'] = tf.pk
+        c.write()
 
     def subclass_genesis(self, genesisclass):
         """Subclass the given genesis class and implement all abstract methods

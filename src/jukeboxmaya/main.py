@@ -9,7 +9,7 @@ import maya.cmds as cmds
 
 from jukeboxcore import main
 import jukeboxmaya
-from jukeboxmaya.constants import MAYA_PLUGIN_PATH
+from jukeboxmaya.constants import MAYA_PLUGIN_PATH, BUILTIN_PLUGIN_PATH
 from jukeboxmaya.plugins import MayaPluginManager
 from jukeboxmaya.menu import MenuManager
 
@@ -46,6 +46,8 @@ def init():
     :raises: None
     """
     main.init_environment()
+    pluginpath = os.pathsep.join((os.environ.get('JUKEBOX_PLUGIN_PATH', ''), BUILTIN_PLUGIN_PATH))
+    os.environ['JUKEBOX_PLUGIN_PATH'] = pluginpath
     try:
         maya.standalone.initialize()
         jukeboxmaya.STANDALONE_INITIALIZED = True
