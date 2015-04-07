@@ -106,5 +106,3 @@ class MayaPluginManager(PluginManager):
     supportedTypes.append(JB_MayaPlugin)
     supportedTypes.append(JB_MayaStandalonePlugin)
     supportedTypes.append(JB_MayaStandaloneGuiPlugin)
-
-    builtinpluginpath = BUILTIN_PLUGIN_PATH
