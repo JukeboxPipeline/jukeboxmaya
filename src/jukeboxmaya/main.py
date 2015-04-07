@@ -47,7 +47,7 @@ def init():
     """
     main.init_environment()
     pluginpath = os.pathsep.join((os.environ.get('JUKEBOX_PLUGIN_PATH', ''), BUILTIN_PLUGIN_PATH))
-    os.environ['JUKEBOX_PLUGIN_PATH'] = pluginpath
+    os.environ['JUKEBOX_PLUGIN_PATHS'] = pluginpath
     try:
         maya.standalone.initialize()
         jukeboxmaya.STANDALONE_INITIALIZED = True
