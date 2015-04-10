@@ -95,8 +95,7 @@ class AssetReftypeInterface(ReftypeInterface):
         """
         scenenodes = cmds.ls(nodes, type='jb_sceneNode')
         assert scenenodes, "Found no scene nodes!"
-        assert len(scenenodes) == 1, "Found to many scene nodes! %s" % scenenodes
-        return scenenodes[0]
+        return sorted(scenenodes)[0]
 
     def reference(self, refobj, taskfileinfo):
         """Reference the given taskfileinfo into the scene and return the created reference node
