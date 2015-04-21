@@ -57,10 +57,11 @@ def get_current_scene_node():
     :rtype: str | None
     :raises: None
     """
-    l = cmds.ls(type='jb_sceneNode')
+    c = cmds.namespaceInfo(':', listOnlyDependencyNodes=True, absoluteName=True)
+    l = cmds.ls(c, type='jb_sceneNode', absoluteName=True)
     if not l:
         return
     else:
-        for n in l:
+        for n in sorted(l):
             if not cmds.listConnections("%s.reftrack" % n, d=False):
                 return n
