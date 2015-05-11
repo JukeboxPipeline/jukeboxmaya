@@ -57,7 +57,7 @@ def get_current_scene_node():
     :rtype: str | None
     :raises: None
     """
-    c = cmds.namespaceInfo(':', listOnlyDependencyNodes=True, absoluteName=True)
+    c = cmds.namespaceInfo(':', listOnlyDependencyNodes=True, absoluteName=True, dagPath=True)
     l = cmds.ls(c, type='jb_sceneNode', absoluteName=True)
     if not l:
         return
