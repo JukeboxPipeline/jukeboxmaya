@@ -1,6 +1,6 @@
 __author__ = 'David Zuber'
 __email__ = 'zuber.david@gmx.de'
-__version__ = '3.2.3'
+__version__ = '3.3.0'
 
 
 STANDALONE_INITIALIZED = None

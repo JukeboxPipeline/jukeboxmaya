@@ -22,3 +22,8 @@ History
 +++++++++++++++++++++++++++++++++++++++
 
 * Reference workflow
+
+3.3.0 (2015-05-29)
++++++++++++++++++++++++++++++++++++++++
+
+* Release picks up last file from genesis
