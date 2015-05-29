@@ -35,6 +35,11 @@ def load_mayaplugins():
     os.environ['MAYA_PLUG_IN_PATH'] = mpp
 
 
+def show_help():
+    import webbrowser
+    webbrowser.open('https://ca-confluence.hdm-stuttgart.de/display/JP/First+Steps')
+
+
 def init():
     """Initialize the pipeline in maya so everything works
 
@@ -55,7 +60,8 @@ def init():
         jukeboxmaya.STANDALONE_INITIALIZED = False
         if str(e) == "maya.standalone may only be used from an external Python interpreter":
             mm = MenuManager.get()
-            mm.create_menu("Jukebox", tearOff=True)
+            mainmenu = mm.create_menu("Jukebox", tearOff=True)
+            mm.create_menu("Help", parent=mainmenu, command=show_help)
     # load plugins
     pmanager = MayaPluginManager.get()
     pmanager.load_plugins()
