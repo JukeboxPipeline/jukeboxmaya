@@ -232,6 +232,9 @@ class MayaGenesis(JB_MayaPlugin):
                 :rtype: str
                 :raises: None
                 """
+                scenenodes = cmds.ls(':jb_sceneNode*')
+                if len(scenenodes) > 1:
+                    cmds.delete(scenenodes)
                 node = jbscene.get_current_scene_node()
                 if node is None:
                     cmds.namespace(set=':')
