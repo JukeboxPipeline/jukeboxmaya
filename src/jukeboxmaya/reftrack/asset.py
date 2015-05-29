@@ -294,7 +294,8 @@ class AssetReftypeInterface(ReftypeInterface):
         tasks = defaultdict(list)
         for tfi in taskfileinfos:
             tasks[tfi.task].append(tfi)
-        for task, tfis in reversed(tasks.iteritems()):
+        for task in reversed(sorted(tasks.keys(), key=lambda t: t.department.ordervalue)):
+            tfis = tasks[task]
             taskdata = djitemdata.TaskItemData(task)
             taskitem = TreeItem(taskdata, rootitem)
             for tfi in reversed(tfis):
