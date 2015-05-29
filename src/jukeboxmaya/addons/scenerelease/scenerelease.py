@@ -1,11 +1,12 @@
 from PySide import QtGui
 
+from jukedj import models
 from jukeboxmaya.menu import MenuManager
 from jukeboxcore.djadapter import FILETYPES
 from jukeboxcore.action import ActionUnit, ActionCollection
 from jukeboxcore.release import ReleaseActions
 from jukeboxcore.gui.widgets.releasewin import ReleaseWin
-from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin
+from jukeboxmaya.plugins import JB_MayaStandaloneGuiPlugin, MayaPluginManager
 from jukeboxmaya.mayapylauncher import mayapy_launcher
 from jukeboxmaya.commands import open_scene, save_scene, import_all_references, update_scenenode
 from jukeboxmaya.gui.main import maya_main_window
@@ -118,6 +119,7 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
 
     This can be used as a standalone plugin.
     """
+    required = ('MayaGenesis',)
 
     author = "David Zuber"
     copyright = "2014"
@@ -186,4 +188,13 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         mayawin = maya_main_window()
         self.rw = ReleaseWin(FILETYPES["mayamainscene"], parent=mayawin)
         self.rw.set_release_actions(ra)
+        pm = MayaPluginManager.get()
+        genesis =  pm.get_plugin("MayaGenesis")
+        c = genesis.get_config()
+        try:
+            f = models.TaskFile.objects.get(pk=c['lastfile'])
+        except models.TaskFile.DoesNotExist:
+            pass
+        else:
+            self.rw.browser.set_selection(f)
         self.rw.show()
