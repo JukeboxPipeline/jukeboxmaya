@@ -35,7 +35,7 @@ def load_mayaplugins():
     os.environ['MAYA_PLUG_IN_PATH'] = mpp
 
 
-def show_help():
+def show_help(*args, **kwargs):
     import webbrowser
     webbrowser.open('https://ca-confluence.hdm-stuttgart.de/display/JP/First+Steps')
 
