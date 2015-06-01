@@ -205,7 +205,7 @@ class MayaGenesis(JB_MayaPlugin):
                 r = self.check_modified()
                 if r is False:
                     return False
-                cmds.file(taskfile.path, open=True, force=True)
+                cmds.file(taskfile.path, open=True, force=True, ignoreVersion=True)
                 return True
 
             def get_current_file(self, ):
