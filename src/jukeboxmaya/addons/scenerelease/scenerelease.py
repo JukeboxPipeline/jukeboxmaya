@@ -196,5 +196,6 @@ class MayaSceneRelease(JB_MayaStandaloneGuiPlugin):
         except models.TaskFile.DoesNotExist:
             pass
         else:
-            self.rw.browser.set_selection(f)
+            if f.releasetype == 'work':
+                self.rw.browser.set_selection(f)
         self.rw.show()
